@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0c0c0e">
-<title>Meu Work OS V2 • Seu espaço de trabalho</title>
+<meta name="theme-color" content="#0b2953">
+<title>Meu Work OS V2.1 • Artes e Conteúdos</title>
 <style>
 :root{color-scheme:dark;--bg:#0c0c0e;--panel:#131316;--panel2:#19191d;--panel3:#202025;--ink:#f6f6f7;--muted:#a0a0aa;--dim:#72727d;--border:#303037;--strong:#ebebef;--shadow:0 20px 65px #0009;--r:14px}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;color:inherit}button:disabled{opacity:.45;cursor:not-allowed}input,select,textarea{color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:9px;outline:none}input:focus,select:focus,textarea:focus{border-color:#a4a4af;box-shadow:0 0 0 3px #ffffff0d}input,select{min-height:38px;padding:8px 11px}textarea{padding:12px;resize:vertical;line-height:1.5}select option{background:#19191d}button{border:0;background:transparent}a{color:var(--ink)}.hidden{display:none!important}.ico{width:17px;height:17px;display:inline-block;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}.ico.big{width:21px;height:21px}.ico.small{width:14px;height:14px}.muted{color:var(--muted)}.dim{color:var(--dim)}.tiny{font-size:11px}.small{font-size:12px}.semibold{font-weight:650}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.flex{display:flex}.items-center{align-items:center}.gap8{gap:8px}.btn{min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border-radius:9px;border:1px solid var(--border);background:var(--panel2);font-weight:600;white-space:nowrap;transition:background .15s,border-color .15s}.btn:hover{background:var(--panel3);border-color:#5a5a63}.btn.primary{background:var(--ink);color:#101012;border-color:var(--ink)}.btn.primary:hover{background:#dedee3}.btn.danger{color:#fff;border-color:#755e65}.btn.icon-only{width:36px;padding:0}.btn.ghost{background:transparent;border-color:transparent}.btn.ghost:hover{background:var(--panel2)}.btn.sm{min-height:32px;padding:6px 10px;font-size:12px}.tag{border:1px solid var(--border);border-radius:7px;padding:4px 7px;font-size:11px;font-weight:650;background:#232329;color:#d7d7dc;white-space:nowrap}.tag.done{background:#d9d9dd;color:#18181b;border-color:#d9d9dd}.tag.progress{background:#38383f}.tag.blocked{border-style:dashed}.tag.overdue{color:#fafafa;border-color:#a7a7b2}.label{font-size:11px;font-weight:700;letter-spacing:.075em;color:var(--dim);text-transform:uppercase}.tip{font-size:12px;line-height:1.5;color:var(--muted)}
@@ -20,42 +20,207 @@
 @media(max-width:1100px){.statbar{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:23px}.topbar{padding:13px 20px}.hero h1{font-size:24px}.column{max-height:calc(100dvh - 315px)}}
 @media(max-width:760px){.sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-101%);transition:transform .18s;width:252px}.sidebar.open{transform:translateX(0)}.overlay-sidebar.open{display:block;position:fixed;inset:0;background:#0009;z-index:19}.mobile-menu{display:inline-flex}.topbar{min-height:63px;padding:10px 12px}.top-actions .desktop-only{display:none}.work-title{font-size:15px}.content{padding:19px 13px 29px}.hero{align-items:stretch;flex-direction:column;margin-bottom:17px}.hero h1{font-size:23px}.hero-controls{justify-content:flex-start}.statbar{gap:8px;margin-bottom:17px}.stat{padding:12px}.stat strong{font-size:22px}.toolbar{align-items:stretch}.segmented{width:100%;justify-content:space-between}.segmented button{justify-content:center;flex:1;padding:9px 3px}.filters{width:100%;display:grid;grid-template-columns:1fr 1fr}.search-wrap{grid-column:1/-1}.search-wrap input{width:100%}.filters select{width:100%;max-width:none}.column{width:282px;flex-basis:282px;max-height:calc(100dvh - 350px)}.calendar-head{padding:11px;align-items:center}.calendar-head h3{font-size:14px}.cal-day{min-height:75px;padding:4px 3px}.cal-num{width:22px;height:22px;font-size:11px;margin-bottom:2px}.cal-event{font-size:9px;padding:3px 4px;margin:2px 0}.calendar-weekdays>div{font-size:9px;padding:9px 0}.calendar-hint{font-size:10px}.modal-body{padding:15px}.modal-head,.modal-actions{padding:12px 15px}.details-layout{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.cloud-state{max-width:108px;padding:6px 9px}.cloud-state .cloud-text{overflow:hidden;text-overflow:ellipsis}.board-scroll{margin-right:-13px;padding-right:13px}}
 @media(max-width:390px){.topbar{gap:6px}.top-actions{gap:4px}.stat-label{font-size:10px}.hero-controls .btn{font-size:11px;padding:9px}.cloud-state{max-width:82px}}
+
+
+/* =====================================================================
+   V2.1 - LAYOUT AZUL / CABEÇALHO HORIZONTAL (REFERÊNCIA DO USUÁRIO)
+   Mantém os componentes operacionais da V2.
+   ===================================================================== */
+:root{
+  color-scheme:dark;
+  --bg:#0d2d5c; --panel:#0f294b; --panel2:#19385f;
+  --panel3:#24456d; --ink:#fafcff; --muted:#c4d4ea;
+  --dim:#92adcf; --border:#385577; --strong:#f4f8ff;
+  --shadow:0 22px 65px #00142f9c; --r:9px;
+}
+html,body{background:#0d2b57;color:#f7f9ff}
+body{background:radial-gradient(ellipse at 24% 29%,#103a77 0%,#0d2e5d 45%,#0b254b 100%)}
+#app{min-height:100vh;height:100dvh;background:transparent}
+.sidebar,.overlay-sidebar{display:none!important}
+.workspace{width:100%;flex:1;min-width:0;background:transparent}
+.topbar{min-height:61px;height:61px;flex:none;padding:0 17px;gap:16px;background:#0b2953;border-bottom:1px solid #345176;display:flex;align-items:center;justify-content:space-between}
+.header-left,.header-right,.header-brand{display:flex;align-items:center;min-width:0}
+.header-left{gap:22px;flex:none}
+.header-brand{gap:11px;white-space:nowrap}
+.logo-mark{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:7px;background:#458cfa;color:white;font-weight:850;font-size:17px;letter-spacing:-.6px;box-shadow:inset 0 1px 0 #ffffff33}
+.logo-label{font-size:15px;font-weight:800;color:#fefefe;letter-spacing:-.2px}
+.workspace-picker{position:relative;min-width:0}
+.workspace-button{display:flex;align-items:center;gap:7px;max-width:245px;padding:10px 2px;font-weight:750;font-size:14px;color:#f7f9ff;white-space:nowrap}
+.workspace-button:hover{color:#d6e6ff}
+.workspace-button span{overflow:hidden;text-overflow:ellipsis}
+.workspace-button .head-ico{width:14px;height:14px}
+.head-ico{display:inline-block;width:15px;height:15px;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round;fill:none;flex:none}
+.header-right{gap:10px;flex:1;justify-content:flex-end}
+.header-search{position:relative;width:260px;max-width:35vw;flex:none}
+.header-search .head-ico{display:none}
+.header-search input{width:100%;height:41px;min-height:41px;background:#1b3b66;border:1px solid #3c5a80;border-radius:8px;color:#f7faff;padding:9px 13px;font-size:13px;box-shadow:none}
+.header-search input::placeholder{color:#e0eaf8;opacity:.9}
+.header-search input:focus{border-color:#7dabef;box-shadow:0 0 0 2px #699dfc38}
+.header-tabs.segmented{padding:4px;border-radius:8px;gap:3px;flex:none;background:#071e3d;border:1px solid #365278;height:42px}
+.header-tabs.segmented button{padding:8px 13px;min-height:33px;font-size:13px;gap:6px;border-radius:6px;color:#d5e4fa;font-weight:750}
+.header-tabs.segmented button.active{background:#3371c9;color:#fff}
+.header-tabs.segmented button:hover:not(.active){color:white;background:#1d406b}
+.header-icon-button{width:39px;height:41px;display:grid;place-items:center;border:1px solid #3d5b7e;border-radius:8px;background:#153564;color:#f4f7ff;flex:none;position:relative;padding:0;transition:background .15s}
+.header-icon-button .head-ico{width:17px;height:17px}
+.header-icon-button:hover{background:#225084}
+#cloud-pill.cloud-state{display:grid;min-width:39px;max-width:39px;padding:0;height:41px;border-radius:8px;color:#f4f7ff;background:#153564}
+#cloud-pill .status-dot{width:5px;height:5px;position:absolute;right:6px;bottom:6px;background:#9ab5dd;border:1px solid #153564}
+#cloud-pill[data-kind="online"] .status-dot{background:#65e0a2}
+#cloud-pill[data-kind="error"] .status-dot{background:#ff7d89}
+.workspace-menu{position:absolute;top:calc(100% + 12px);left:-10px;z-index:60;width:min(310px,calc(100vw - 24px));padding:9px;background:#102e54;border:1px solid #466489;box-shadow:0 16px 38px #001832b8;border-radius:11px}
+.menu-title{display:block;padding:7px 10px;color:#a9c0db;letter-spacing:.07em;font-size:10px;font-weight:750}
+.menu-rename{display:flex;gap:5px;padding:0 8px 8px}.menu-rename input{min-width:0;flex:1;background:#1e406d;border:1px solid #54729a;color:#fff;font-size:12px;min-height:34px;padding:6px 8px}
+.menu-rename .btn{background:#387cde;border-color:#387cde;color:#fff;min-height:34px}
+.menu-divider{height:1px;background:#35587d;margin:5px 0}
+.menu-item{width:100%;display:flex;align-items:center;gap:9px;border-radius:6px;padding:10px 11px;font-size:12px;text-align:left;color:#eff5fe}.menu-item:hover,.menu-item.active{background:#254d82}
+.menu-item .head-ico{width:14px;height:14px}
+.menu-filter-label{padding-bottom:4px}
+#status-filter{width:calc(100% - 16px);margin:0 8px 8px;background:#1f426d;border:1px solid #55739a;font-size:12px;color:#fff}
+.menu-status{padding:9px 10px 4px;font-size:11px;color:#a5bedd;overflow-wrap:anywhere}
+.content{padding:17px 18px 18px;min-width:0;flex:1;overflow:auto;background:transparent}
+.hero{display:flex;align-items:flex-start;justify-content:space-between;gap:17px;margin:0 0 27px}
+.hero h1{font-size:20px;line-height:1.25;font-weight:800;letter-spacing:-.25px;margin:1px 0 2px;color:#fff}
+.hero p{font-size:12px;line-height:1.35;color:#d5e3f7;margin:0}
+.hero-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.hero-controls select{background:#0b2345;color:#fff;border:1px solid #466587;border-radius:7px;font-size:13px;height:41px;min-height:41px;padding:7px 12px;max-width:170px}
+.btn{background:#193a66;border:1px solid #49658b;color:#fff;border-radius:7px;min-height:41px;font-size:13px}
+.btn:hover{background:#29517e;border-color:#7895ba}
+.btn.primary{background:#397fec;border-color:#397fec;color:#fff}
+.btn.primary:hover{background:#5692f7;border-color:#5692f7}
+.btn-today.active{background:#397fec;border-color:#76a7ff}
+.create-button{padding-left:13px;padding-right:15px;font-size:14px;font-weight:750;gap:7px}
+.create-button .head-ico{width:16px;height:16px;stroke-width:2.6}
+.statbar,.toolbar,.eyebrow{display:none!important}
+.view-content{min-width:0;margin:0}
+.board-scroll{max-width:100%;overflow:auto;padding:0 0 22px;scrollbar-color:#6381ab transparent}
+.board{gap:10px;min-height:420px;align-items:flex-start}
+.column{width:286px;flex:0 0 286px;min-height:171px;max-height:calc(100dvh - 160px);background:#101613;border:1px solid #293c35;border-radius:9px;overflow:hidden}
+.column-head{padding:11px 12px 9px;gap:8px}
+.column-head h3{font-size:12px;letter-spacing:.005em;font-weight:800;text-transform:uppercase;color:#f7f9f8}
+.column-head .dot{background:#477fd2;border:0;width:6px;height:6px}
+.column-head .count{background:transparent;color:#a3aaa9;padding:2px;font-size:11px}
+.column-head .btn{min-height:22px!important;padding:0 4px!important;color:#aaa;background:transparent;border:0;font-size:15px}
+.column-cards{padding:1px 7px 5px;overflow-y:auto;scrollbar-color:#4b5253 transparent}
+.kanban-card{margin-bottom:7px;background:#292c32;border:1px solid #33383c;border-radius:7px;box-shadow:0 2px 5px #0004}
+.kanban-card:hover{border-color:#7591b3}
+.card-cover{height:122px}
+.card-body{padding:9px 10px}
+.card-top{margin-bottom:7px}
+.card-title{font-size:12px;font-weight:550;line-height:1.45;color:#f1f3f6}
+.card-bottom{margin-top:8px;gap:8px;color:#aab5c3}
+.card-descr{color:#abb9c9}
+.tag{font-size:10px;padding:3px 6px;background:#364153;border:1px solid #475b73}
+.tag.done{background:#c4f4d6;color:#184732;border-color:#b2edc9}
+.tag.progress{background:#ffe9b7;color:#61430d;border-color:#ecd99e}
+.tag.blocked{background:#ffe1e1;color:#762b36}
+.column-foot{padding:2px 7px 7px}
+.add-card{padding:8px 7px;color:#c6d0cd;font-size:12px}
+.add-card:hover{background:#26332e}
+.add-column{background:#102948;border:1px dashed #5b7ca9;color:#e9f3ff;height:43px;min-width:235px;border-radius:7px}
+.add-column:hover{background:#204876}
+.group-panel{background:#102749;border:1px solid #456389}.group-panel-head{border-bottom:1px solid #3c5c84}
+.data-table th{background:#13325a;color:#acc3e4}.data-table tr:hover td{background:#1b406c}
+.calendar-shell{background:#0b2549;border:1px solid #46678f}
+.calendar-head{background:#11345f;border-bottom:1px solid #3d5c82}
+.cal-day{background:#10315a;border-color:#36557c}.cal-day.other{background:#0c2547}.cal-day.today{background:#143e73}
+.cal-event{background:#3677cb;color:#fff}.cal-event:hover{background:#4b94ef}
+.empty{background:#102c51;border:1px dashed #47648a}.empty h3{color:#fff}
+@media(max-width:1050px){
+  .header-left{gap:10px}.header-right{gap:7px}.header-search{width:205px;max-width:28vw}
+  .header-tabs.segmented button{padding:8px 9px}.logo-label{font-size:13px}
+  .workspace-button{font-size:12px;max-width:170px}
+}
+@media(max-width:760px){
+  .topbar{height:auto;min-height:0;display:flex;flex-direction:column;align-items:stretch;padding:10px 12px 9px;gap:10px}
+  .header-left{justify-content:space-between;width:100%}.header-right{width:100%;gap:7px}
+  .header-search{flex:1;width:auto;max-width:none;min-width:60px}
+  .header-search input{min-height:37px;height:37px;font-size:12px}
+  .header-tabs.segmented{height:38px;padding:3px}.header-tabs.segmented button{min-height:30px;font-size:11px;padding:6px 7px}
+  .header-tabs.segmented button .head-ico{width:13px;height:13px}
+  .header-icon-button,#cloud-pill.cloud-state{width:36px;height:38px;min-width:36px;max-width:36px}
+  .content{padding:16px 12px 20px}.hero{flex-direction:column;align-items:stretch;gap:12px;margin-bottom:18px}
+  .hero h1{font-size:19px}.hero-controls{width:100%;justify-content:flex-end;gap:7px}
+  .hero-controls select{flex:1;max-width:none;min-width:100px;font-size:12px}
+  .create-button{font-size:12px;padding:8px 10px}
+  .board-scroll{margin-right:-12px;padding-right:12px}
+  .column{max-height:calc(100dvh - 210px);width:276px;flex-basis:276px}
+}
+@media(max-width:760px){
+  /* Busca em largura total e navegação completa em telas pequenas. */
+  .header-right{display:grid;grid-template-columns:minmax(0,1fr) 36px 36px;grid-template-areas:"search search search" "tabs cloud export";column-gap:7px;row-gap:8px;align-items:center}
+  .header-search{grid-area:search;width:100%;min-width:0;max-width:none}
+  .header-tabs.segmented{grid-area:tabs;width:100%;justify-self:stretch;display:flex;align-items:center;justify-content:space-around}
+  .header-tabs.segmented button{flex:1;justify-content:center}
+  .header-right #cloud-pill{grid-area:cloud}
+  .header-right > button[data-action="backup"]{grid-area:export}
+}
+@media(max-width:480px){
+  .topbar{gap:8px}.header-brand{gap:7px}.logo-label{font-size:12px}.workspace-button{font-size:11px;max-width:170px}
+  .header-search .head-ico{display:block;position:absolute;left:8px;top:11px;width:13px;height:13px;color:#b5c6de}
+  .header-search input{padding-left:27px;font-size:11px}
+  .header-tabs.segmented button{font-size:11px;min-width:0;padding:7px 5px}.header-tabs.segmented button .head-ico{width:14px;height:14px}
+  .header-icon-button,#cloud-pill.cloud-state{width:34px;height:37px;min-width:34px;max-width:34px}
+  .hero-controls select{min-width:110px}.hero .btn-today{padding:8px 9px}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
+  <!-- Navegação compacta seguindo a referência enviada. -->
   <div class="overlay-sidebar" id="sidebar-shade"></div>
-  <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="brand-symbol">W.</div><div><div class="brand-title">Meu Work OS <span class="dim">/ V2</span></div><div class="brand-sub">Organize. Crie. Entregue.</div></div></div>
-    <div class="side-scroll">
-      <div class="side-section label">ESPAÇO DE TRABALHO</div>
-      <button type="button" class="side-item" data-switch="table" id="nav-table">▦ &nbsp; Tabela</button>
-      <button type="button" class="side-item" data-switch="board" id="nav-board">▥ &nbsp; Quadro Kanban</button>
-      <button type="button" class="side-item" data-switch="calendar" id="nav-calendar">▦ &nbsp; Calendário</button>
-      <div class="side-divider"></div>
-      <div class="side-section label" style="display:flex;justify-content:space-between;align-items:center">SEUS GRUPOS <button type="button" class="btn ghost sm" data-action="add-group" title="Novo grupo">＋</button></div>
-      <div id="side-groups"></div>
-    </div>
-    <div class="sidebar-footer">
-      <div id="side-account" class="user-label">Dados locais neste navegador</div>
-      <button type="button" class="side-item" data-action="cloud">⚙ &nbsp; Segurança e nuvem</button>
-      <button type="button" class="side-item" data-action="backup">⇩ &nbsp; Exportar backup JSON</button>
-      <button type="button" class="side-item" data-action="import">⇧ &nbsp; Importar dados</button>
-      <input type="file" accept=".json,application/json" id="import-input" class="hidden">
-    </div>
+  <aside class="sidebar" id="sidebar" aria-hidden="true">
+    <div id="side-groups"></div><div id="side-account"></div>
   </aside>
   <div class="workspace">
     <header class="topbar">
-      <div class="flex items-center gap8" style="min-width:0"><button type="button" class="btn ghost icon-only mobile-menu" data-action="mobile-menu" aria-label="Abrir menu">☰</button><div style="min-width:0"><div class="bread">ESPAÇO PESSOAL / MEU WORK OS</div><div class="work-title truncate">Central de produtividade</div></div></div>
-      <div class="top-actions"><button type="button" id="cloud-pill" class="cloud-state" data-action="cloud" data-kind="local"><span class="status-dot"></span><span class="cloud-text" id="cloud-text">Modo local</span></button><button type="button" class="btn ghost icon-only desktop-only" data-action="backup" title="Baixar backup">⇩</button><button type="button" class="btn primary" data-action="add-task">＋ <span class="desktop-only">Nova tarefa</span></button></div>
+      <div class="header-left">
+        <div class="header-brand" aria-label="Meu Work OS"><span class="logo-mark">M</span><span class="logo-label">Meu Work OS</span></div>
+        <div class="workspace-picker" id="workspace-picker">
+          <button type="button" class="workspace-button" id="workspace-toggle" data-action="workspace-menu" aria-expanded="false" aria-controls="workspace-menu"><span id="workspace-label">Artes e Conteúdos</span> <svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="workspace-menu hidden" id="workspace-menu" role="menu" aria-label="Opções do espaço de trabalho">
+            <div class="menu-title">ESPAÇO DE TRABALHO</div>
+            <div class="menu-rename"><input type="text" maxlength="60" id="workspace-name" aria-label="Nome do espaço" value="Artes e Conteúdos"><button type="button" class="btn sm" data-action="save-workspace">Salvar</button></div>
+            <div class="menu-divider"></div>
+            <button type="button" class="menu-item" data-switch="board"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><rect x="3" y="4" width="8" height="16" rx="1.3"/><rect x="13" y="4" width="8" height="16" rx="1.3"/></svg> Quadro Kanban</button>
+            <button type="button" class="menu-item" data-switch="calendar"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/></svg> Calendário</button>
+            <button type="button" class="menu-item" data-switch="table">▦ &nbsp; Visualização em tabela</button>
+            <div class="menu-divider"></div>
+            <label for="status-filter" class="menu-title menu-filter-label">FILTRAR POR STATUS</label>
+            <select id="status-filter" aria-label="Filtrar por status"><option value="">Todos os status</option><option value="pendente">Não iniciado</option><option value="andamento">Em andamento</option><option value="feito">Feito</option><option value="travado">Travado</option></select>
+            <div class="menu-divider"></div>
+            <button type="button" class="menu-item" data-action="add-group">＋ &nbsp; Criar coluna / grupo</button>
+            <button type="button" class="menu-item" data-action="cloud"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="m12 3 8 3v5.7c0 5.3-3.7 8.3-8 10.3-4.3-2-8-5-8-10.3V6l8-3Z"/><path d="M9 12.5l2 2 4-4"/></svg> Segurança e nuvem</button>
+            <button type="button" class="menu-item" data-action="backup"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="M12 16V3M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg> Exportar backup JSON</button>
+            <button type="button" class="menu-item" data-action="import">⇧ &nbsp; Importar dados JSON</button>
+            <div class="menu-status" id="side-account-menu">Dados locais neste navegador</div>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="header-search"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Buscar tarefas..." autocomplete="off" aria-label="Buscar tarefas"></div>
+        <div class="header-tabs segmented" role="tablist" aria-label="Visualizações">
+          <button type="button" data-switch="board" id="tab-board"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><rect x="3" y="4" width="8" height="16" rx="1.3"/><rect x="13" y="4" width="8" height="16" rx="1.3"/></svg> Quadro</button>
+          <button type="button" data-switch="calendar" id="tab-calendar"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/></svg> Calendário</button>
+        </div>
+        <button type="button" class="header-icon-button cloud-state" id="cloud-pill" data-action="cloud" data-kind="local" aria-label="Segurança e sincronização" title="Segurança e sincronização"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="m12 3 8 3v5.7c0 5.3-3.7 8.3-8 10.3-4.3-2-8-5-8-10.3V6l8-3Z"/><path d="M9 12.5l2 2 4-4"/></svg><span id="cloud-text" class="hidden">Modo local</span><span class="status-dot"></span></button>
+        <button type="button" class="header-icon-button" data-action="backup" aria-label="Exportar backup" title="Exportar backup"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="M12 16V3M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg></button>
+      </div>
     </header>
     <main class="content" id="main-scroll">
-      <section class="hero"><div><div class="eyebrow">PAINEL DE CONTROLE</div><h1>Seu trabalho, sob controle.</h1><p>Projetos, tarefas e prazos em um só lugar.</p></div><div class="hero-controls"><button type="button" class="btn" data-action="add-group">＋ Novo grupo</button><button type="button" class="btn" data-action="cloud">☁ Sincronização</button></div></section>
-      <section class="statbar" id="stats"></section>
-      <div class="toolbar"><div class="segmented" role="tablist" aria-label="Visualizações"><button type="button" data-switch="table" id="tab-table">▦ &nbsp;Tabela</button><button type="button" data-switch="board" id="tab-board">▥ &nbsp;Quadro</button><button type="button" data-switch="calendar" id="tab-calendar">▦ &nbsp;Calendário</button></div><div class="filters"><div class="search-wrap"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Buscar tarefas..." autocomplete="off" aria-label="Buscar tarefas"></div><select id="status-filter" aria-label="Filtrar por status"><option value="">Todos os status</option><option value="pendente">Não iniciado</option><option value="andamento">Em andamento</option><option value="feito">Feito</option><option value="travado">Travado</option></select><select id="priority-filter" aria-label="Filtrar por prioridade"><option value="">Todas as prioridades</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div></div>
+      <section class="hero">
+        <div class="hero-copy"><h1>Quadro principal</h1><p>Organize projetos, conteúdos e entregas.</p></div>
+        <div class="hero-controls">
+          <select id="priority-filter" aria-label="Filtrar por prioridade"><option value="">Todas prioridades</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
+          <button type="button" class="btn btn-today" id="today-button" data-action="toolbar-today" aria-pressed="false">Hoje</button>
+          <button type="button" class="btn primary create-button" data-action="add-task"><svg viewBox="0 0 24 24" aria-hidden="true" class="head-ico"><path d="M12 5v14M5 12h14"/></svg> Novo cartão</button>
+        </div>
+      </section>
+      <section class="statbar hidden" id="stats" aria-hidden="true"></section>
       <section id="view" class="view-content" aria-live="polite"></section>
     </main>
   </div>
+  <input type="file" accept=".json,application/json" id="import-input" class="hidden">
 </div>
 <div id="dialog-root"></div>
 <div class="toast-stack" id="toasts" role="status" aria-live="polite"></div>
@@ -84,22 +249,22 @@ try{let v=localStorage.getItem(KEY);if(v){initial=normalizeData(JSON.parse(v));h
 let state=initial||{grupos:defaultGroups()};
 let preferences={};try{preferences=JSON.parse(localStorage.getItem(SETTINGS)||'{}')||{}}catch{}
 let view=['table','board','calendar'].includes(preferences.view)?preferences.view:'board';
-let month=new Date(),search='',statusFilter='',priorityFilter='',modalTask=null,modalGroup=null,modalUnsaved=false;
+let month=new Date(),search='',statusFilter='',priorityFilter='',todayOnly=false,modalTask=null,modalGroup=null,modalUnsaved=false;
 let cloudCfg={};try{cloudCfg=JSON.parse(localStorage.getItem(CLOUD_CFG)||'{}')||{}}catch{}
 let sb=null,user=null,remoteVersion=null,saveTimer=null,saving=false,dirty=false,remoteConflict=false,cloudReady=false;
 const generatedUrls=new Map();const remoteUrls=new Map();
 const getGroup=id=>state.grupos.find(g=>g.id===String(id));
 const findTask=id=>{for(let g of state.grupos){let task=g.tarefas.find(t=>t.id===String(id));if(task)return {task,group:g}}return null};
 const allTasks=()=>state.grupos.flatMap(g=>g.tarefas.map(t=>({...t,groupId:g.id,groupName:g.titulo})));
-const filtered=t=>(!search||(t.nome+' '+t.notas+' '+t.descricao).toLocaleLowerCase('pt-BR').includes(search))&&(!statusFilter||t.status===statusFilter)&&(!priorityFilter||t.prioridade===priorityFilter);
+const filtered=t=>(!search||(t.nome+' '+t.notas+' '+t.descricao).toLocaleLowerCase('pt-BR').includes(search))&&(!statusFilter||t.status===statusFilter)&&(!priorityFilter||t.prioridade===priorityFilter)&&(!todayOnly||view==='calendar'||t.prazo===today());
 const countStats=()=>{let ts=allTasks();return {total:ts.length,done:ts.filter(t=>t.status==='feito').length,progress:ts.filter(t=>t.status==='andamento').length,late:ts.filter(t=>t.prazo&&t.prazo<today()&&t.status!=='feito').length}};
 const fmtBytes=n=>n? n<1024*1024?Math.ceil(n/1024)+' KB':(n/1024/1024).toFixed(1)+' MB':'';
 function toast(message,error=false){let el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=message;$('#toasts').append(el);setTimeout(()=>el.remove(),4100)}
 function persist({skipCloud=false}={}){if(!user){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{toast('Espaço local esgotado. Exporte um backup.',true)}}if(user&&!skipCloud){dirty=true;queueCloudSave()}}
 function mutate(fn){fn();persist();render();}
-function setView(next){view=next;preferences.view=next;localStorage.setItem(SETTINGS,JSON.stringify(preferences));closeSidebar();render()}
+function setView(next){view=next;preferences.view=next;localStorage.setItem(SETTINGS,JSON.stringify(preferences));closeSidebar();closeWorkspaceMenu();render()}
 function closeSidebar(){$('#sidebar').classList.remove('open');$('#sidebar-shade').classList.remove('open')}
-function render(){renderStats();renderSidebar();renderView();$$('[data-switch]').forEach(b=>{b.classList.toggle('active',b.dataset.switch===view);b.setAttribute('aria-selected',String(b.dataset.switch===view))});renderCloudStatus()}
+function render(){renderStats();renderSidebar();renderView();$$('[data-switch]').forEach(b=>{b.classList.toggle('active',b.dataset.switch===view);b.setAttribute('aria-selected',String(b.dataset.switch===view))});$('#workspace-label').textContent=preferences.workspaceName||'Artes e Conteúdos';$('#side-account-menu').textContent=user?`Conectado: ${user.email||'Conta Supabase'}`:'Dados locais neste navegador';$('#today-button').classList.toggle('active',todayOnly&&view!=='calendar');$('#today-button').setAttribute('aria-pressed',String(todayOnly&&view!=='calendar'));renderCloudStatus()}
 function renderStats(){let s=countStats();$('#stats').innerHTML=`${[[s.total,'Total de tarefas','□'],[s.progress,'Em andamento','◌'],[s.done,'Concluídas','✓'],[s.late,'Prazos vencidos','◷']].map(([n,l,ico])=>`<div class="stat"><div class="stat-foot"><strong>${n}</strong><span class="dim" style="font-size:20px">${ico}</span></div><div class="stat-label">${l}</div></div>`).join('')}`}
 function renderSidebar(){$('#side-groups').innerHTML=state.grupos.map(g=>`<button class="group-jump" data-action="jump-group" data-id="${esc(g.id)}" title="${esc(g.titulo)}"><span class="dot"></span><span class="truncate" style="flex:1">${esc(g.titulo)}</span><span class="side-count">${g.tarefas.length}</span></button>`).join('');$('#side-account').textContent=user?`Conectado: ${user.email||'Conta Supabase'}`:'Dados locais neste navegador'}
 function renderView(){if(view==='board')renderBoard();else if(view==='table')renderTable();else renderCalendar();}
@@ -167,11 +332,16 @@ function showCloudDialog(){let configured=!!(cloudCfg.url&&cloudCfg.key);dialog(
 async function saveCloudConfig(){let url=$('#sb-url').value.trim(),key=$('#sb-key').value.trim();if(!url&&!key){cloudCfg={};localStorage.removeItem(CLOUD_CFG);sb=null;user=null;remoteVersion=null;closeDialog();render();toast('Configuração de nuvem removida.');return}try{let parsed=new URL(url);if(parsed.protocol!=='https:')throw Error('Use uma URL HTTPS');if(!key||/^sb_secret_|^service_role/i.test(key))throw Error('Use somente a chave publicável / anon');cloudCfg={url:parsed.href.replace(/\/$/,''),key};localStorage.setItem(CLOUD_CFG,JSON.stringify(cloudCfg));sb=createCloudClient();if(!sb)return;closeDialog();await initCloud();showCloudDialog();toast('Configuração salva. Entre com sua conta.')}catch(e){toast(e.message,true)}}
 async function loginCloud(signUp){if(!sb)sb=createCloudClient();if(!sb)return;let email=$('#auth-email')?.value.trim(),password=$('#auth-password')?.value;if(!email||!password){toast('Preencha e-mail e senha.',true);return}try{let result=signUp?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(result.error)throw result.error;closeDialog();if(signUp&&!result.data.session)toast('Conta criada. Confirme o e-mail antes de entrar.');else toast('Login realizado com sucesso.')}catch(e){toast('Autenticação: '+e.message,true)}}
 async function logoutCloud(){if(!sb)return;if(dirty){toast('Há alterações pendentes. Exporte um backup antes de sair.',true);exportBackup();return}let {error}=await sb.auth.signOut();if(error)toast(error.message,true);else{closeDialog();toast('Você saiu da nuvem. As tarefas locais permanecem neste navegador.')}}
+function closeWorkspaceMenu(){let menu=$('#workspace-menu');if(menu)menu.classList.add('hidden');$('#workspace-toggle')?.setAttribute('aria-expanded','false')}
+function toggleWorkspaceMenu(){let menu=$('#workspace-menu');let willOpen=menu.classList.contains('hidden');if(willOpen){$('#workspace-name').value=preferences.workspaceName||'Artes e Conteúdos';menu.classList.remove('hidden')}else closeWorkspaceMenu();$('#workspace-toggle').setAttribute('aria-expanded',String(willOpen))}
+function saveWorkspaceName(){let name=$('#workspace-name').value.trim();if(!name){toast('Informe o nome do espaço de trabalho.',true);return}preferences.workspaceName=name;localStorage.setItem(SETTINGS,JSON.stringify(preferences));$('#workspace-label').textContent=name;closeWorkspaceMenu();toast('Nome do espaço atualizado.')}
+function handleToday(){if(view==='calendar'){month=new Date();renderCalendar()}else{todayOnly=!todayOnly;render();toast(todayOnly?'Mostrando apenas cartões com prazo hoje.':'Mostrando todos os prazos.')}}
 /* Delegação de ações para manter o HTML livre de código dinâmico em atributos de eventos. */
-document.addEventListener('click',async e=>{let b=e.target.closest('[data-action],[data-switch]');if(!b)return;if(b.dataset.switch){setView(b.dataset.switch);return}let a=b.dataset.action,id=b.dataset.id;switch(a){case 'mobile-menu':$('#sidebar').classList.toggle('open');$('#sidebar-shade').classList.toggle('open');break;case 'add-group':showGroupDialog();break;case 'edit-group':showGroupDialog(id);break;case 'save-group':saveGroup();break;case 'delete-group':deleteGroup();break;case 'add-task':showTaskDialog(null,b.dataset.group||null,b.dataset.date||'');break;case 'open-task':showTaskDialog(id);break;case 'save-task':saveTask();break;case 'delete-task':deleteTask();break;case 'close-dialog':closeDialog();break;case 'check-add':addChecklist();break;case 'check-remove':toggleChecklist(id,false,true);break;case 'remove-attachment':removeAttachment(id);break;case 'view-attachment':viewAttachment(id);break;case 'close-preview':$('#media-preview')?.remove();break;case 'add-url':addUrl();break;case 'backup':exportBackup();break;case 'import':$('#import-input').click();break;case 'cloud':showCloudDialog();break;case 'save-cloud-config':await saveCloudConfig();break;case 'signin':await loginCloud(false);break;case 'signup':await loginCloud(true);break;case 'signout':await logoutCloud();break;case 'sync-now':closeDialog();if(remoteConflict)await resolveConflict();else if(dirty)await saveCloud();else await loadCloud(true);break;case 'choose-cloud':await cloudChoose('cloud');break;case 'choose-local':await cloudChoose('local');break;case 'calendar-prev':month=new Date(month.getFullYear(),month.getMonth()-1,1);renderCalendar();break;case 'calendar-next':month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCalendar();break;case 'calendar-today':month=new Date();renderCalendar();break;case 'calendar-day':if(e.target.closest('.cal-event'))return;showTaskDialog(null,null,b.dataset.date);break;case 'jump-group':{if(view==='calendar')setView('board');closeSidebar();let g=$(`[id="group-${CSS.escape(id)}"]`);g?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});break}}});
+document.addEventListener('click',async e=>{let b=e.target.closest('[data-action],[data-switch]');if(!b)return;if(b.dataset.switch){setView(b.dataset.switch);return}let a=b.dataset.action,id=b.dataset.id;switch(a){case 'mobile-menu':$('#sidebar').classList.toggle('open');$('#sidebar-shade').classList.toggle('open');break;case 'workspace-menu':toggleWorkspaceMenu();break;case 'save-workspace':saveWorkspaceName();break;case 'toolbar-today':handleToday();break;case 'add-group':closeWorkspaceMenu();showGroupDialog();break;case 'edit-group':showGroupDialog(id);break;case 'save-group':saveGroup();break;case 'delete-group':deleteGroup();break;case 'add-task':showTaskDialog(null,b.dataset.group||null,b.dataset.date||'');break;case 'open-task':showTaskDialog(id);break;case 'save-task':saveTask();break;case 'delete-task':deleteTask();break;case 'close-dialog':closeDialog();break;case 'check-add':addChecklist();break;case 'check-remove':toggleChecklist(id,false,true);break;case 'remove-attachment':removeAttachment(id);break;case 'view-attachment':viewAttachment(id);break;case 'close-preview':$('#media-preview')?.remove();break;case 'add-url':addUrl();break;case 'backup':closeWorkspaceMenu();exportBackup();break;case 'import':closeWorkspaceMenu();$('#import-input').click();break;case 'cloud':closeWorkspaceMenu();showCloudDialog();break;case 'save-cloud-config':await saveCloudConfig();break;case 'signin':await loginCloud(false);break;case 'signup':await loginCloud(true);break;case 'signout':await logoutCloud();break;case 'sync-now':closeDialog();if(remoteConflict)await resolveConflict();else if(dirty)await saveCloud();else await loadCloud(true);break;case 'choose-cloud':await cloudChoose('cloud');break;case 'choose-local':await cloudChoose('local');break;case 'calendar-prev':month=new Date(month.getFullYear(),month.getMonth()-1,1);renderCalendar();break;case 'calendar-next':month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCalendar();break;case 'calendar-today':month=new Date();renderCalendar();break;case 'calendar-day':if(e.target.closest('.cal-event'))return;showTaskDialog(null,null,b.dataset.date);break;case 'jump-group':{if(view==='calendar')setView('board');closeSidebar();let g=$(`[id="group-${CSS.escape(id)}"]`);g?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});break}}});
 document.addEventListener('change',async e=>{let el=e.target;if(el.id==='import-input'){await importBackup(el.files[0]);return}if(el.id==='media-input'){await uploadMedia(el.files);el.value='';return}if(el.dataset.taskChange){quickChange(el.dataset.id,el.dataset.taskChange,el.value);return}if(el.dataset.action==='check-toggle'){toggleChecklist(el.dataset.id,el.checked);return}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#media-preview')?.remove();if($('#dialog-root').innerHTML)closeDialog();closeSidebar();return}if(e.key==='Enter'&&document.activeElement?.id==='check-input'){e.preventDefault();addChecklist()}if(e.key==='Enter'&&e.target.matches('.kanban-card'))showTaskDialog(e.target.dataset.taskId)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeWorkspaceMenu();$('#media-preview')?.remove();if($('#dialog-root').innerHTML)closeDialog();closeSidebar();return}if(e.key==='Enter'&&document.activeElement?.id==='check-input'){e.preventDefault();addChecklist()}if(e.key==='Enter'&&e.target.matches('.kanban-card'))showTaskDialog(e.target.dataset.taskId)});
 $('#search').addEventListener('input',e=>{search=e.target.value.trim().toLocaleLowerCase('pt-BR');renderView()});$('#status-filter').addEventListener('change',e=>{statusFilter=e.target.value;renderView()});$('#priority-filter').addEventListener('change',e=>{priorityFilter=e.target.value;renderView()});$('#sidebar-shade').addEventListener('click',closeSidebar);
+document.addEventListener('click',e=>{if(!e.target.closest('#workspace-picker'))closeWorkspaceMenu()});
 let dragging=null;
 document.addEventListener('dragstart',e=>{let c=e.target.closest('.kanban-card');if(!c)return;dragging={taskId:c.dataset.taskId,from:c.dataset.groupId};e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',c.dataset.taskId);c.classList.add('dragging')});
 document.addEventListener('dragover',e=>{let col=e.target.closest('[data-drop-group]');if(!col||!dragging)return;e.preventDefault();e.dataTransfer.dropEffect='move';$$('.column.drag-over').forEach(c=>c.classList.remove('drag-over'));col.classList.add('drag-over');let c=e.target.closest('.kanban-card');$$('.kanban-card.over').forEach(el=>el.classList.remove('over'));if(c)c.classList.add('over')});
