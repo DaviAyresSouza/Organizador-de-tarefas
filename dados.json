@@ -7,7 +7,7 @@
       {
         "id": 101,
         "nome": "Planejar metas do mês",
-        "status": "andamento",
+        "status": "travado",
         "prioridade": "alta",
         "prazo": "2025-05-15",
         "notas": "Revisar orçamento"
