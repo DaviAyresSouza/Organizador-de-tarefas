@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Work OS - Organizador Pessoal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6f8; }
+    .status-select { appearance: none; text-align: center; text-align-last: center; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    .status-select:hover { opacity: 0.9; }
+    /* Cores estilo Monday */
+    .st-feito { background-color: #00c875; color: white; }
+    .st-andamento { background-color: #fdab3d; color: white; }
+    .st-travado { background-color: #e2445c; color: white; }
+    .st-pendente { background-color: #c4c4c4; color: white; }
+    
+    .pr-alta { background-color: #401694; color: white; }
+    .pr-media { background-color: #5559df; color: white; }
+    .pr-baixa { background-color: #579bfc; color: white; }
+  </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-96 text-center">
+      <div class="flex justify-center mb-4">
+        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Acesso Restrito</h2>
+      <p class="text-sm text-gray-500 mb-6">Digite sua senha para acessar seu organizador pessoal</p>
+      <input type="password" id="password-input" placeholder="Senha de acesso" 
+        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg tracking-widest"
+        onkeypress="if(event.key === 'Enter') verificarSenha()">
+      <button onclick="verificarSenha()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition">
+        Entrar
+      </button>
+      <p id="login-error" class="text-red-500 text-sm mt-3 hidden">Senha incorreta!</p>
+    </div>
+  </div>
+
+  <!-- BARRA LATERAL (SIDEBAR) -->
+  <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between">
+    <div>
+      <div class="p-5 flex items-center gap-3 border-b border-slate-700">
+        <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold">M</div>
+        <span class="font-bold text-lg tracking-wide">Meu Work OS</span>
+      </div>
+      <div class="p-4">
+        <p class="text-xs uppercase text-slate-400 font-semibold mb-3">Espaço de Trabalho</p>
+        <button class="w-full flex items-center gap-3 px-3 py-2 bg-blue-600 rounded-lg text-sm font-medium">
+          <i class="fa-solid fa-table-columns"></i> Quadro Principal
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 space-y-2">
+      <p class="text-xs uppercase text-slate-400 font-semibold mb-2">Backup de Dados</p>
+      <button onclick="exportarDados()" class="w-full flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition">
+        <i class="fa-solid fa-download"></i> Exportar JSON
+      </button>
+      <label class="w-full flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition cursor-pointer">
+        <i class="fa-solid fa-upload"></i> Importar JSON
+        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importarDados(event)">
+      </label>
+      <button onclick="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-slate-800 rounded text-xs transition mt-4">
+        <i class="fa-solid fa-lock"></i> Bloquear Tela
+      </button>
+    </div>
+  </aside>
+
+  <!-- ÁREA PRINCIPAL -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- CABEÇALHO -->
+    <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Organizador de Tarefas Pessoal</h1>
+        <p class="text-sm text-gray-500">Gerencie seus projetos, prazos e prioridades em um só lugar</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+          <input type="text" id="search-input" oninput="renderizarQuadros()" placeholder="Buscar tarefa..." 
+            class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button onclick="adicionarGrupo()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-plus"></i> Novo Grupo
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO DOS QUADROS -->
+    <div id="boards-container" class="flex-1 overflow-y-auto p-8 space-y-8">
+      <!-- Os grupos serão inseridos aqui via JavaScript -->
+    </div>
+  </main>
+
+  <script>
+    const SENHA_CORRETA = "301523";
+    const STORAGE_KEY = "meu_work_os_dados_v1";
+
+    // Dados iniciais padrão
+    let grupos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+      {
+        id: 1,
+        titulo: "Para Fazer Esta Semana",
+        cor: "#579bfc",
+        tarefas: [
+          { id: 101, nome: "Planejar metas do mês", status: "feito", prioridade: "alta", prazo: "2025-05-15", notas: "Revisar orçamento" },
+          { id: 102, nome: "Configurar repositório no GitHub", status: "andamento", prioridade: "media", prazo: "2025-05-16", notas: "Ativar GitHub Pages" }
+        ]
+      },
+      {
+        id: 2,
+        titulo: "Projetos Futuros / Ideias",
+        cor: "#a25ddc",
+        tarefas: [
+          { id: 201, nome: "Estudar novas ferramentas", status: "pendente", prioridade: "baixa", prazo: "", notas: "Separar 1h por dia" }
+        ]
+      }
+    ];
+
+    // Verificação de Login
+    function verificarSenha() {
+      const input = document.getElementById("password-input").value;
+      const error = document.getElementById("login-error");
+      if (input === SENHA_CORRETA) {
+        sessionStorage.setItem("autenticado", "sim");
+        document.getElementById("login-screen").classList.add("hidden");
+        error.classList.add("hidden");
+      } else {
+        error.classList.remove("hidden");
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem("autenticado");
+      document.getElementById("password-input").value = "";
+      document.getElementById("login-screen").classList.remove("hidden");
+    }
+
+    if (sessionStorage.getItem("autenticado") === "sim") {
+      document.getElementById("login-screen").classList.add("hidden");
+    }
+
+    // Salvar no LocalStorage
+    function salvarDados() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
+    }
+
+    // Renderizar interface
+    function renderizarQuadros() {
+      const container = document.getElementById("boards-container");
+      const termoBusca = document.getElementById("search-input").value.toLowerCase();
+      container.innerHTML = "";
+
+      grupos.forEach(grupo => {
+        const tarefasFiltradas = grupo.tarefas.filter(t => 
+          t.nome.toLowerCase().includes(termoBusca) || t.notas.toLowerCase().includes(termoBusca)
+        );
+
+        // Cálculo da barra de progresso
+        const total = grupo.tarefas.length || 1;
+        const concluidas = grupo.tarefas.filter(t => t.status === 'feito').length;
+        const emAndamento = grupo.tarefas.filter(t => t.status === 'andamento').length;
+        const travadas = grupo.tarefas.filter(t => t.status === 'travado').length;
+
+        const grupoEl = document.createElement("div");
+        grupoEl.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden";
+        
+        grupoEl.innerHTML = `
+          <!-- Cabeçalho do Grupo -->
+          <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100" style="border-left: 6px solid ${grupo.cor}">
+            <div class="flex items-center gap-3">
+              <input type="text" value="${grupo.titulo}" 
+                onchange="editarTituloGrupo(${grupo.id}, this.value)"
+                class="font-bold text-lg focus:outline-none focus:border-b border-gray-400" style="color: ${grupo.cor}">
+              <span class="text-xs text-gray-400 font-medium">${grupo.tarefas.length} tarefas</span>
+            </div>
+            <button onclick="removerGrupo(${grupo.id})" class="text-gray-400 hover:text-red-500 text-sm" title="Excluir Grupo">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+
+          <!-- Tabela de Tarefas -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-gray-200 text-xs uppercase text-gray-400 bg-gray-50">
+                  <th class="py-2.5 px-4 w-5/12">Tarefa</th>
+                  <th class="py-2.5 px-2 w-32 text-center">Status</th>
+                  <th class="py-2.5 px-2 w-32 text-center">Prioridade</th>
+                  <th class="py-2.5 px-2 w-36 text-center">Prazo</th>
+                  <th class="py-2.5 px-4">Notas</th>
+                  <th class="py-2.5 px-2 w-10"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100 text-sm">
+                ${tarefasFiltradas.map(t => `
+                  <tr class="hover:bg-gray-50 group">
+                    <td class="py-2 px-4" style="border-left: 4px solid ${grupo.cor}">
+                      <input type="text" value="${t.nome}" 
+                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'nome', this.value)"
+                        class="w-full bg-transparent focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-400 rounded px-1 py-0.5 text-gray-800 font-medium">
+                    </td>
+                    <td class="p-1">
+                      <select onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'status', this.value)" 
+                        class="status-select w-full py-1.5 rounded text-xs st-${t.status}">
+                        <option value="pendente" ${t.status === 'pendente' ? 'selected' : ''}>Não Iniciado</option>
+                        <option value="andamento" ${t.status === 'andamento' ? 'selected' : ''}>Em Andamento</option>
+                        <option value="feito" ${t.status === 'feito' ? 'selected' : ''}>Feito</option>
+                        <option value="travado" ${t.status === 'travado' ? 'selected' : ''}>Travado</option>
+                      </select>
+                    </td>
+                    <td class="p-1">
+                      <select onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'prioridade', this.value)" 
+                        class="status-select w-full py-1.5 rounded text-xs pr-${t.prioridade}">
+                        <option value="baixa" ${t.prioridade === 'baixa' ? 'selected' : ''}>Baixa</option>
+                        <option value="media" ${t.prioridade === 'media' ? 'selected' : ''}>Média</option>
+                        <option value="alta" ${t.prioridade === 'alta' ? 'selected' : ''}>Alta</option>
+                      </select>
+                    </td>
+                    <td class="p-1 text-center">
+                      <input type="date" value="${t.prazo}" 
+                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'prazo', this.value)"
+                        class="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600 focus:outline-none focus:border-blue-400">
+                    </td>
+                    <td class="py-2 px-4">
+                      <input type="text" value="${t.notas}" placeholder="Adicionar nota..."
+                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'notas', this.value)"
+                        class="w-full bg-transparent text-gray-500 text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-400 rounded px-1 py-0.5">
+                    </td>
+                    <td class="py-2 px-2 text-center">
+                      <button onclick="removerTarefa(${grupo.id}, ${t.id})" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Rodapé do Grupo (Adicionar Tarefa + Barra de Progresso) -->
+          <div class="bg-gray-50 px-4 py-2.5 flex justify-between items-center border-t border-gray-100">
+            <div class="flex items-center gap-2 w-1/2">
+              <input type="text" id="nova-tarefa-${grupo.id}" placeholder="+ Adicionar tarefa" 
+                onkeypress="if(event.key === 'Enter') adicionarTarefa(${grupo.id})"
+                class="text-sm bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 rounded px-2 py-1 w-full">
+            </div>
+            
+            <!-- Barra de Progresso Visual -->
+            <div class="w-48 h-4 bg-gray-200 rounded-full overflow-hidden flex" title="Progresso do Grupo">
+              <div style="width: ${(concluidas/total)*100}%" class="st-feito h-full"></div>
+              <div style="width: ${(emAndamento/total)*100}%" class="st-andamento h-full"></div>
+              <div style="width: ${(travadas/total)*100}%" class="st-travado h-full"></div>
+            </div>
+          </div>
+        `;
+        container.appendChild(grupoEl);
+      });
+    }
+
+    // Funções de Manipulação
+    function adicionarGrupo() {
+      const cores = ["#579bfc", "#a25ddc", "#00c875", "#fdab3d", "#e2445c", "#0086c0"];
+      const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+      grupos.push({
+        id: Date.now(),
+        titulo: "Novo Grupo",
+        cor: corAleatoria,
+        tarefas: []
+      });
+      salvarDados();
+      renderizarQuadros();
+    }
+
+    function editarTituloGrupo(grupoId, novoTitulo) {
+      const g = grupos.find(x => x.id === grupoId);
+      if (g) { g.titulo = novoTitulo; salvarDados(); }
+    }
+
+    function removerGrupo(grupoId) {
+      if (confirm("Tem certeza que deseja excluir este grupo e todas as tarefas dele?")) {
+        grupos = grupos.filter(x => x.id !== grupoId);
+        salvarDados();
+        renderizarQuadros();
+      }
+    }
+
+    function adicionarTarefa(grupoId) {
+      const input = document.getElementById(`nova-tarefa-${grupoId}`);
+      const nome = input.value.trim();
+      if (!nome) return;
+
+      const g = grupos.find(x => x.id === grupoId);
+      if (g) {
+        g.tarefas.push({
+          id: Date.now(),
+          nome: nome,
+          status: "pendente",
+          prioridade: "media",
+          prazo: "",
+          notas: ""
+        });
+        salvarDados();
+        renderizarQuadros();
+      }
+    }
+
+    function atualizarTarefa(grupoId, tarefaId, campo, valor) {
+      const g = grupos.find(x => x.id === grupoId);
+      if (g) {
+        const t = g.tarefas.find(x => x.id === tarefaId);
+        if (t) {
+          t[campo] = valor;
+          salvarDados();
+          renderizarQuadros();
+        }
+      }
+    }
+
+    function removerTarefa(grupoId, tarefaId) {
+      const g = grupos.find(x => x.id === grupoId);
+      if (g) {
+        g.tarefas = g.tarefas.filter(x => x.id !== tarefaId);
+        salvarDados();
+        renderizarQuadros();
+      }
+    }
+
+    // Exportar e Importar Backup
+    function exportarDados() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(grupos, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "backup_tarefas.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importarDados(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const dadosImportados = JSON.parse(e.target.result);
+          if (Array.isArray(dadosImportados)) {
+            grupos = dadosImportados;
+            salvarDados();
+            renderizarQuadros();
+            alert("Backup restaurado com sucesso!");
+          }
+        } catch (err) {
+          alert("Erro ao ler o arquivo de backup.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Inicializar
+    renderizarQuadros();
+  </script>
+</body>
+</html>
