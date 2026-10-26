@@ -1,510 +1,234 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espaço de trabalho - Davi Augusto</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6f8; }
-    .status-select { appearance: none; text-align: center; text-align-last: center; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-    .status-select:hover { opacity: 0.9; }
-    .st-feito { background-color: #00c875; color: white; }
-    .st-andamento { background-color: #fdab3d; color: white; }
-    .st-travado { background-color: #e2445c; color: white; }
-    .st-pendente { background-color: #c4c4c4; color: white; }
-    .pr-alta { background-color: #401694; color: white; }
-    .pr-media { background-color: #5559df; color: white; }
-    .pr-baixa { background-color: #579bfc; color: white; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Work OS — Projetos & Conteúdos</title>
+<style>
+:root{--navy:#0b2e63;--navy2:#082650;--panel:#172b46;--card:#24364f;--card2:#1b2c43;--text:#f4f7fb;--muted:#a9b8cc;--line:#354963;--blue:#579bfc;--green:#22c55e;--yellow:#f5b942;--red:#f06475;--purple:#a78bfa;--shadow:0 8px 24px #00152d38}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(145deg,#0b326a,#09254c 65%,#061d3c);color:var(--text);height:100vh;overflow:hidden}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #8bbcff;outline-offset:2px}
+.topbar{height:62px;display:flex;align-items:center;gap:14px;padding:0 20px;background:#082957eF;border-bottom:1px solid #ffffff17;box-shadow:0 4px 18px #00152d22}.brand{display:flex;align-items:center;gap:10px;font-weight:800;white-space:nowrap}.logo{width:32px;height:32px;border-radius:9px;background:#4f8df7;display:grid;place-items:center;font-size:18px}.workspace{border:0;background:transparent;color:#eaf2ff;font-weight:700;padding:8px 10px;border-radius:8px}.workspace:hover,.top-btn:hover{background:#ffffff14}.top-spacer{flex:1}.search{width:min(260px,26vw);background:#ffffff12;border:1px solid #ffffff25;color:white;border-radius:8px;padding:9px 12px}.search::placeholder{color:#c2d1e4}.top-btn,.btn{border:1px solid #ffffff2b;background:#ffffff0c;color:white;padding:9px 12px;border-radius:8px;font-weight:650}.btn.primary{background:#397ce8;border-color:#397ce8}.btn.primary:hover{background:#2869d2}.btn.subtle{background:#ffffff0b}.btn.danger{background:#7f2636;border-color:#9d394a}.tabs{display:flex;align-items:center;gap:5px;padding:4px;background:#061d3dbb;border:1px solid #ffffff1a;border-radius:10px}.tab{border:0;color:#b9c8db;background:transparent;border-radius:7px;padding:8px 12px;font-size:13px;font-weight:750}.tab.active{background:#2e67ba;color:white;box-shadow:0 2px 7px #00152d55}
+.app{height:calc(100vh - 62px);display:flex;flex-direction:column}.toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px 12px;flex-wrap:wrap}.board-title{font-size:20px;font-weight:800;margin-right:4px}.subtitle{color:#b6c7dc;font-size:12px}.toolbar .push{flex:1}.board-scroll{flex:1;overflow:auto;padding:8px 20px 24px}.board{display:flex;align-items:flex-start;gap:12px;min-height:100%;width:max-content;min-width:100%}.column{width:278px;max-height:100%;display:flex;flex-direction:column;background:#111f31f2;border:1px solid #ffffff12;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.column-head{display:flex;align-items:center;gap:8px;padding:13px 12px 10px;border-top:3px solid var(--col,#579bfc)}.column-name{flex:1;min-width:0;background:transparent;border:0;color:#f4f7fb;font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.2px}.count{color:#9cacc0;font-size:11px}.icon-btn{border:0;background:transparent;color:#a9b8cc;border-radius:6px;padding:5px 7px}.icon-btn:hover{background:#ffffff16;color:white}.cards{padding:0 8px 8px;overflow-y:auto;min-height:30px}.task-card{background:#27364b;border:1px solid #ffffff0b;border-radius:8px;margin:0 0 8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 6px #0002;transition:transform .12s,border-color .12s}.task-card:hover{border-color:#ffffff35;transform:translateY(-1px)}.task-card.dragging{opacity:.45}.cover{width:100%;max-height:150px;object-fit:cover;display:block;background:#17263a}.card-body{padding:10px}.card-title{font-size:13px;line-height:1.4;font-weight:650;overflow-wrap:anywhere}.labels{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px}.label{height:7px;min-width:28px;border-radius:5px;display:inline-block}.label-text{font-size:10px;padding:3px 6px;border-radius:5px;color:#081526;font-weight:800}.card-meta{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:9px;color:#b9c7d8;font-size:10px}.meta-pill{display:inline-flex;align-items:center;gap:4px}.priority-dot{width:7px;height:7px;border-radius:50%;display:inline-block}.add-card{margin:0 8px 8px;padding:9px;text-align:left;background:transparent;border:0;border-radius:7px;color:#b8c6d8;font-size:12px}.add-card:hover{background:#ffffff10;color:white}.add-column{width:278px;min-width:278px;padding:13px;text-align:left;background:#ffffff14;border:1px solid #ffffff18;color:#eaf2ff;border-radius:11px;font-weight:700}.drop-hint{outline:2px dashed #6ca6ff;outline-offset:-5px;background:#29496a}
+.calendar-wrap{flex:1;min-height:0;overflow:auto;padding:0 20px 24px}.calendar-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.calendar-month{font-size:19px;font-weight:800;min-width:190px}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));min-width:850px;border-top:1px solid #ffffff26;border-left:1px solid #ffffff26;border-radius:8px;overflow:hidden}.weekday{background:#ffffff0c;color:#c6d5e7;text-transform:uppercase;font-size:10px;font-weight:800;padding:10px;border-right:1px solid #ffffff20;border-bottom:1px solid #ffffff20}.day{min-height:112px;background:#0b2445b8;padding:7px;border-right:1px solid #ffffff20;border-bottom:1px solid #ffffff20;transition:background .1s}.day:hover{background:#16375f}.day.outside{background:#071d39aa;color:#6f829c}.day.today{box-shadow:inset 0 0 0 2px #579bfc}.day-number{font-size:11px;color:#d6e2f0;margin-bottom:6px;display:flex;justify-content:space-between}.day.today .day-number span:first-child{background:#397ce8;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;margin:-5px 0 -3px -3px}.calendar-task{display:block;width:100%;text-align:left;border:0;border-left:3px solid var(--task-color,#579bfc);background:#243d5b;color:#f1f6ff;padding:5px 6px;margin:4px 0;border-radius:4px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calendar-task:hover{background:#355575}.empty{color:#aabbd0;text-align:center;padding:44px 20px}.hidden{display:none!important}
+.overlay{position:fixed;inset:0;background:#020b18b8;z-index:20;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}.modal{width:min(760px,100%);max-height:94vh;overflow:auto;background:#15273e;border:1px solid #ffffff22;border-radius:14px;box-shadow:0 25px 90px #0008}.modal.small{width:min(470px,100%)}.modal-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:16px 18px;background:#15273ef5;border-bottom:1px solid #ffffff18}.modal-head h2{font-size:17px;margin:0;flex:1}.modal-content{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#bdcce0;font-weight:750}.field input,.field textarea,.field select,.field .fake-input{width:100%;border:1px solid #40556f;background:#0d1d31;color:#f3f7fc;padding:10px;border-radius:7px;min-width:0}.field textarea{min-height:90px;resize:vertical}.field input[type=color]{height:39px;padding:4px}.modal-actions{display:flex;align-items:center;gap:8px;padding:14px 18px;border-top:1px solid #ffffff18;flex-wrap:wrap}.modal-actions .push{flex:1}.section-title{font-size:12px;font-weight:850;color:#e6effb;margin:5px 0 9px}.upload-zone{border:1px dashed #627d9f;border-radius:9px;padding:16px;text-align:center;color:#bdcce0;background:#0b1d32;font-size:12px}.upload-zone.dragover{border-color:#65a1ff;background:#193b60}.attachments{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:9px}.attachment{position:relative;border:1px solid #ffffff1a;border-radius:8px;overflow:hidden;background:#0a1a2d;min-width:0}.attachment img,.attachment video{width:100%;height:95px;object-fit:cover;display:block;background:#000}.attachment .att-name{padding:6px;font-size:10px;overflow-wrap:anywhere;color:#dbe6f4}.attachment .remove-att{position:absolute;right:4px;top:4px;background:#111d2bde;color:white;border:0;border-radius:5px;padding:4px 6px}.check-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff12;font-size:12px}.check-row input{accent-color:#579bfc}.check-row span{flex:1;overflow-wrap:anywhere}.check-row.done span{text-decoration:line-through;color:#8293a9}.small-input{background:#0d1d31;color:white;border:1px solid #40556f;padding:8px;border-radius:7px;min-width:0}.toast{position:fixed;bottom:18px;right:18px;background:#172b43;color:white;border:1px solid #ffffff30;padding:12px 16px;border-radius:9px;box-shadow:var(--shadow);z-index:50;font-size:13px;max-width:min(400px,calc(100vw - 36px))}.toast.error{border-color:#f06475}.footer-note{color:#93a8c2;font-size:10px;padding:6px 20px 12px}
+@media(max-width:700px){.topbar{padding:0 10px;gap:7px;height:58px}.brand span.brand-name{display:none}.search{width:35vw}.top-btn{padding:8px}.app{height:calc(100vh - 58px)}.toolbar{padding:12px 12px 8px}.board-scroll,.calendar-wrap{padding-left:12px;padding-right:12px}.column{width:84vw;max-width:300px}.add-column{width:84vw;min-width:84vw}.modal-content{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{max-height:96vh}.calendar-grid{min-width:770px}.day{min-height:95px}.calendar-month{min-width:150px;font-size:16px}.subtitle{display:none}}
+</style>
 </head>
-<body class="h-screen flex overflow-hidden">
-
-  <!-- TELA DE LOGIN -->
-  <div id="login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-96 text-center">
-      <div class="flex justify-center mb-4">
-        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow">
-          <i class="fa-solid fa-layer-group"></i>
-        </div>
-      </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">Acesso Restrito</h2>
-      <p class="text-sm text-gray-500 mb-6">Digite sua senha para acessar seu organizador</p>
-      <input type="password" id="password-input" placeholder="Senha de acesso" 
-        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg tracking-widest"
-        onkeypress="if(event.key === 'Enter') verificarSenha()">
-      <button onclick="verificarSenha()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition">
-        Entrar
-      </button>
-      <p id="login-error" class="text-red-500 text-sm mt-3 hidden">Senha incorreta!</p>
-    </div>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">M</div><span class="brand-name">Meu Work OS</span></div>
+  <button class="workspace" id="workspaceName" title="Nome do espaço de trabalho">Artes e Conteúdos ▾</button>
+  <div class="top-spacer"></div>
+  <input id="searchInput" class="search" type="search" placeholder="Buscar tarefas..." aria-label="Buscar tarefas">
+  <div class="tabs" role="tablist" aria-label="Visualização">
+    <button class="tab active" data-view="board" role="tab">▥ Quadro</button>
+    <button class="tab" data-view="calendar" role="tab">▦ Calendário</button>
   </div>
-
-  <!-- MODAL DE CONFIGURAÇÃO DO GITHUB -->
-  <div id="github-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-40 hidden">
-    <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-          <i class="fa-brands fa-github text-xl"></i> Banco de Dados no GitHub
-        </h3>
-        <button onclick="fecharModalGithub()" class="text-gray-400 hover:text-gray-600">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <p class="text-xs text-gray-500 mb-4">
-        Os dados serão salvos em um arquivo <code>dados.json</code> dentro do seu repositório. As credenciais abaixo ficam salvas apenas no seu navegador.
-      </p>
-      <div class="space-y-3 text-sm">
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Seu Usuário do GitHub</label>
-          <input type="text" id="gh-owner" placeholder="Ex: joaosilva" class="w-full px-3 py-2 border rounded-lg">
-        </div>
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Nome do Repositório</label>
-          <input type="text" id="gh-repo" placeholder="Ex: meu-organizador" class="w-full px-3 py-2 border rounded-lg">
-        </div>
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Personal Access Token (Chave)</label>
-          <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-lg">
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="fecharModalGithub()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-        <button onclick="salvarConfigGithub()" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg">Salvar e Sincronizar</button>
-      </div>
+  <button class="top-btn" id="backupBtn" title="Exportar backup JSON">⇩</button>
+  <button class="top-btn" id="importBtn" title="Importar backup JSON">⇧</button>
+  <input id="importFile" type="file" accept=".json,application/json" class="hidden">
+</header>
+<main class="app">
+  <section class="toolbar">
+    <div><div class="board-title" id="viewTitle">Quadro principal</div><div class="subtitle" id="viewSubtitle">Organize projetos, conteúdos e entregas.</div></div>
+    <div class="push"></div>
+    <select id="filterPriority" class="small-input" aria-label="Filtrar prioridade"><option value="">Todas prioridades</option><option value="alta">Prioridade alta</option><option value="media">Prioridade média</option><option value="baixa">Prioridade baixa</option></select>
+    <button class="btn" id="todayBtn">Hoje</button>
+    <button class="btn primary" id="addMainBtn">＋ Novo cartão</button>
+  </section>
+  <section id="boardView" class="board-scroll"><div id="board" class="board"></div></section>
+  <section id="calendarView" class="calendar-wrap hidden">
+    <div class="calendar-head">
+      <button class="btn" id="prevPeriod" aria-label="Período anterior">←</button>
+      <button class="btn" id="nextPeriod" aria-label="Próximo período">→</button>
+      <div id="calendarMonth" class="calendar-month"></div>
+      <select id="calendarMode" class="small-input" aria-label="Visualização do calendário"><option value="month">Mês</option><option value="week">Semana</option><option value="day">Dia</option></select>
     </div>
-  </div>
-
-  <!-- BARRA LATERAL (SIDEBAR) -->
-  <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between">
-    <div>
-      <div class="p-5 flex items-center gap-3 border-b border-slate-700">
-        <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold">M</div>
-        <span class="font-bold text-lg tracking-wide">Meu Work OS</span>
-      </div>
-      <div class="p-4 space-y-2">
-        <p class="text-xs uppercase text-slate-400 font-semibold mb-3">Espaço de Trabalho</p>
-        <button class="w-full flex items-center gap-3 px-3 py-2 bg-blue-600 rounded-lg text-sm font-medium">
-          <i class="fa-solid fa-table-columns"></i> Quadro Principal
-        </button>
-      </div>
-    </div>
-
-    <div class="p-4 border-t border-slate-800 space-y-2">
-      <!-- Status da Nuvem GitHub -->
-      <div class="mb-3 p-2.5 bg-slate-800 rounded-lg flex items-center justify-between">
-        <div class="flex items-center gap-2 text-xs">
-          <i id="sync-icon" class="fa-solid fa-cloud text-slate-400"></i>
-          <span id="sync-status" class="text-slate-300">Modo Local</span>
-        </div>
-        <button onclick="carregarDoGithub()" title="Forçar atualização da nuvem" class="text-slate-400 hover:text-white text-xs">
-          <i class="fa-solid fa-rotate"></i>
-        </button>
-      </div>
-
-      <button onclick="abrirModalGithub()" class="w-full flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 rounded text-xs font-medium transition">
-        <i class="fa-brands fa-github"></i> Configurar Nuvem GitHub
-      </button>
-
-      <p class="text-xs uppercase text-slate-400 font-semibold pt-2 mb-1">Backup Manual</p>
-      <button onclick="exportarDados()" class="w-full flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition">
-        <i class="fa-solid fa-download"></i> Exportar JSON
-      </button>
-      <label class="w-full flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition cursor-pointer">
-        <i class="fa-solid fa-upload"></i> Importar JSON
-        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importarDados(event)">
-      </label>
-      <button onclick="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-slate-800 rounded text-xs transition mt-2">
-        <i class="fa-solid fa-lock"></i> Bloquear Tela
-      </button>
-    </div>
-  </aside>
-
-  <!-- ÁREA PRINCIPAL -->
-  <main class="flex-1 flex flex-col overflow-hidden">
-    <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-800">Organizador de Tarefas Pessoal</h1>
-        <p class="text-sm text-gray-500">Gerencie seus projetos sincronizados com o GitHub</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="relative">
-          <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
-          <input type="text" id="search-input" oninput="renderizarQuadros()" placeholder="Buscar tarefa..." 
-            class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <button onclick="adicionarGrupo()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
-          <i class="fa-solid fa-plus"></i> Novo Grupo
-        </button>
-      </div>
-    </header>
-
-    <div id="boards-container" class="flex-1 overflow-y-auto p-8 space-y-8"></div>
-  </main>
-
-  <script>
-    const SENHA_CORRETA = "301523";
-    const STORAGE_KEY = "meu_work_os_dados_v1";
-    const GH_CONFIG_KEY = "meu_work_os_gh_config";
-    let arquivoShaAtual = null;
-    let timeoutSalvar = null;
-
-    let grupos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-      {
-        id: 1,
-        titulo: "Para Fazer Esta Semana",
-        cor: "#579bfc",
-        tarefas: [
-          { id: 101, nome: "Planejar metas do mês", status: "feito", prioridade: "alta", prazo: "2025-05-15", notas: "Revisar orçamento" },
-          { id: 102, nome: "Configurar banco no GitHub", status: "andamento", prioridade: "media", prazo: "2025-05-16", notas: "Gerar token de acesso" }
-        ]
-      }
-    ];
-
-    // --- LOGIN ---
-    function verificarSenha() {
-      const input = document.getElementById("password-input").value;
-      const error = document.getElementById("login-error");
-      if (input === SENHA_CORRETA) {
-        sessionStorage.setItem("autenticado", "sim");
-        document.getElementById("login-screen").classList.add("hidden");
-        error.classList.add("hidden");
-      } else {
-        error.classList.remove("hidden");
-      }
-    }
-
-    function logout() {
-      sessionStorage.removeItem("autenticado");
-      document.getElementById("password-input").value = "";
-      document.getElementById("login-screen").classList.remove("hidden");
-    }
-
-    if (sessionStorage.getItem("autenticado") === "sim") {
-      document.getElementById("login-screen").classList.add("hidden");
-    }
-
-    // --- INTEGRAÇÃO GITHUB API (BANCO DE DADOS) ---
-    function obterConfigGithub() {
-      return JSON.parse(localStorage.getItem(GH_CONFIG_KEY));
-    }
-
-    function atualizarStatusSync(texto, corIcone, girando = false) {
-      document.getElementById("sync-status").innerText = texto;
-      const icon = document.getElementById("sync-icon");
-      icon.className = `fa-solid ${girando ? 'fa-spinner fa-spin' : 'fa-cloud'} ${corIcone}`;
-    }
-
-    function abrirModalGithub() {
-      const cfg = obterConfigGithub() || {};
-      document.getElementById("gh-owner").value = cfg.owner || "";
-      document.getElementById("gh-repo").value = cfg.repo || "";
-      document.getElementById("gh-token").value = cfg.token || "";
-      document.getElementById("github-modal").classList.remove("hidden");
-    }
-
-    function fecharModalGithub() {
-      document.getElementById("github-modal").classList.add("hidden");
-    }
-
-    async function salvarConfigGithub() {
-      const owner = document.getElementById("gh-owner").value.trim();
-      const repo = document.getElementById("gh-repo").value.trim();
-      const token = document.getElementById("gh-token").value.trim();
-
-      if (!owner || !repo || !token) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
-      localStorage.setItem(GH_CONFIG_KEY, JSON.stringify({ owner, repo, token }));
-      fecharModalGithub();
-      await carregarDoGithub();
-    }
-
-    // Funções de conversão Base64 compatíveis com acentos (UTF-8)
-    function utf8ParaBase64(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
-    }
-    function base64ParaUtf8(str) {
-      return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    }
-
-    async function carregarDoGithub() {
-      const cfg = obterConfigGithub();
-      if (!cfg) return;
-
-      atualizarStatusSync("Carregando...", "text-blue-400", true);
-      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/dados.json`;
-
-      try {
-        const res = await fetch(url, {
-          headers: { "Authorization": `Bearer ${cfg.token}`, "Accept": "application/vnd.github.v3+json" }
-        });
-
-        if (res.status === 404) {
-          // Arquivo ainda não existe no repositório, vamos criá-lo com os dados atuais
-          await salvarNoGithub();
-          return;
-        }
-
-        if (!res.ok) throw new Error("Erro ao acessar repositório");
-
-        const data = await res.json();
-        arquivoShaAtual = data.sha;
-        const conteudoJson = base64ParaUtf8(data.content.replace(/\n/g, ''));
-        grupos = JSON.parse(conteudoJson);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
-        renderizarQuadros();
-        atualizarStatusSync("Sincronizado", "text-emerald-400");
-      } catch (err) {
-        console.error(err);
-        atualizarStatusSync("Erro na Nuvem", "text-red-400");
-      }
-    }
-
-    async function salvarNoGithub() {
-      const cfg = obterConfigGithub();
-      if (!cfg) return;
-
-      atualizarStatusSync("Salvando...", "text-amber-400", true);
-      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/dados.json`;
-
-      try {
-        // Busca o SHA mais recente se ainda não tivermos
-        if (!arquivoShaAtual) {
-          const check = await fetch(url, {
-            headers: { "Authorization": `Bearer ${cfg.token}` }
-          });
-          if (check.ok) {
-            const checkData = await check.json();
-            arquivoShaAtual = checkData.sha;
-          }
-        }
-
-        const body = {
-          message: "Atualizando tarefas via Work OS",
-          content: utf8ParaBase64(JSON.stringify(grupos, null, 2))
-        };
-        if (arquivoShaAtual) body.sha = arquivoShaAtual;
-
-        const res = await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${cfg.token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (!res.ok) throw new Error("Falha ao gravar no GitHub");
-
-        const resData = await res.json();
-        arquivoShaAtual = resData.content.sha;
-        atualizarStatusSync("Salvo no GitHub", "text-emerald-400");
-      } catch (err) {
-        console.error(err);
-        atualizarStatusSync("Erro ao salvar", "text-red-400");
-      }
-    }
-
-    function salvarDados() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
-      // Agenda o salvamento no GitHub (aguarda 1s após a última digitação para não sobrecarregar a API)
-      if (obterConfigGithub()) {
-        clearTimeout(timeoutSalvar);
-        atualizarStatusSync("Modificado...", "text-amber-400");
-        timeoutSalvar = setTimeout(() => salvarNoGithub(), 1000);
-      }
-    }
-
-    // --- RENDERIZAÇÃO E LÓGICA DO QUADRO ---
-    function renderizarQuadros() {
-      const container = document.getElementById("boards-container");
-      const termoBusca = document.getElementById("search-input").value.toLowerCase();
-      container.innerHTML = "";
-
-      grupos.forEach(grupo => {
-        const tarefasFiltradas = grupo.tarefas.filter(t => 
-          t.nome.toLowerCase().includes(termoBusca) || t.notas.toLowerCase().includes(termoBusca)
-        );
-
-        const total = grupo.tarefas.length || 1;
-        const concluidas = grupo.tarefas.filter(t => t.status === 'feito').length;
-        const emAndamento = grupo.tarefas.filter(t => t.status === 'andamento').length;
-        const travadas = grupo.tarefas.filter(t => t.status === 'travado').length;
-
-        const grupoEl = document.createElement("div");
-        grupoEl.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden";
-        
-        grupoEl.innerHTML = `
-          <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100" style="border-left: 6px solid ${grupo.cor}">
-            <div class="flex items-center gap-3">
-              <input type="text" value="${grupo.titulo}" 
-                onchange="editarTituloGrupo(${grupo.id}, this.value)"
-                class="font-bold text-lg focus:outline-none focus:border-b border-gray-400" style="color: ${grupo.cor}">
-              <span class="text-xs text-gray-400 font-medium">${grupo.tarefas.length} tarefas</span>
-            </div>
-            <button onclick="removerGrupo(${grupo.id})" class="text-gray-400 hover:text-red-500 text-sm" title="Excluir Grupo">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="border-b border-gray-200 text-xs uppercase text-gray-400 bg-gray-50">
-                  <th class="py-2.5 px-4 w-5/12">Tarefa</th>
-                  <th class="py-2.5 px-2 w-32 text-center">Status</th>
-                  <th class="py-2.5 px-2 w-32 text-center">Prioridade</th>
-                  <th class="py-2.5 px-2 w-36 text-center">Prazo</th>
-                  <th class="py-2.5 px-4">Notas</th>
-                  <th class="py-2.5 px-2 w-10"></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100 text-sm">
-                ${tarefasFiltradas.map(t => `
-                  <tr class="hover:bg-gray-50 group">
-                    <td class="py-2 px-4" style="border-left: 4px solid ${grupo.cor}">
-                      <input type="text" value="${t.nome}" 
-                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'nome', this.value)"
-                        class="w-full bg-transparent focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-400 rounded px-1 py-0.5 text-gray-800 font-medium">
-                    </td>
-                    <td class="p-1">
-                      <select onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'status', this.value)" 
-                        class="status-select w-full py-1.5 rounded text-xs st-${t.status}">
-                        <option value="pendente" ${t.status === 'pendente' ? 'selected' : ''}>Não Iniciado</option>
-                        <option value="andamento" ${t.status === 'andamento' ? 'selected' : ''}>Em Andamento</option>
-                        <option value="feito" ${t.status === 'feito' ? 'selected' : ''}>Feito</option>
-                        <option value="travado" ${t.status === 'travado' ? 'selected' : ''}>Travado</option>
-                      </select>
-                    </td>
-                    <td class="p-1">
-                      <select onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'prioridade', this.value)" 
-                        class="status-select w-full py-1.5 rounded text-xs pr-${t.prioridade}">
-                        <option value="baixa" ${t.prioridade === 'baixa' ? 'selected' : ''}>Baixa</option>
-                        <option value="media" ${t.prioridade === 'media' ? 'selected' : ''}>Média</option>
-                        <option value="alta" ${t.prioridade === 'alta' ? 'selected' : ''}>Alta</option>
-                      </select>
-                    </td>
-                    <td class="p-1 text-center">
-                      <input type="date" value="${t.prazo}" 
-                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'prazo', this.value)"
-                        class="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600 focus:outline-none focus:border-blue-400">
-                    </td>
-                    <td class="py-2 px-4">
-                      <input type="text" value="${t.notas}" placeholder="Adicionar nota..."
-                        onchange="atualizarTarefa(${grupo.id}, ${t.id}, 'notas', this.value)"
-                        class="w-full bg-transparent text-gray-500 text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-400 rounded px-1 py-0.5">
-                    </td>
-                    <td class="py-2 px-2 text-center">
-                      <button onclick="removerTarefa(${grupo.id}, ${t.id})" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
-                        <i class="fa-solid fa-xmark"></i>
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="bg-gray-50 px-4 py-2.5 flex justify-between items-center border-t border-gray-100">
-            <div class="flex items-center gap-2 w-1/2">
-              <input type="text" id="nova-tarefa-${grupo.id}" placeholder="+ Adicionar tarefa e pressionar Enter" 
-                onkeypress="if(event.key === 'Enter') adicionarTarefa(${grupo.id})"
-                class="text-sm bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 rounded px-2 py-1 w-full">
-            </div>
-            <div class="w-48 h-4 bg-gray-200 rounded-full overflow-hidden flex" title="Progresso do Grupo">
-              <div style="width: ${(concluidas/total)*100}%" class="st-feito h-full"></div>
-              <div style="width: ${(emAndamento/total)*100}%" class="st-andamento h-full"></div>
-              <div style="width: ${(travadas/total)*100}%" class="st-travado h-full"></div>
-            </div>
-          </div>
-        `;
-        container.appendChild(grupoEl);
-      });
-    }
-
-    function adicionarGrupo() {
-      const cores = ["#579bfc", "#a25ddc", "#00c875", "#fdab3d", "#e2445c", "#0086c0"];
-      grupos.push({ id: Date.now(), titulo: "Novo Grupo", cor: cores[Math.floor(Math.random() * cores.length)], tarefas: [] });
-      salvarDados();
-      renderizarQuadros();
-    }
-
-    function editarTituloGrupo(grupoId, novoTitulo) {
-      const g = grupos.find(x => x.id === grupoId);
-      if (g) { g.titulo = novoTitulo; salvarDados(); }
-    }
-
-    function removerGrupo(grupoId) {
-      if (confirm("Excluir este grupo e todas as tarefas dele?")) {
-        grupos = grupos.filter(x => x.id !== grupoId);
-        salvarDados();
-        renderizarQuadros();
-      }
-    }
-
-    function adicionarTarefa(grupoId) {
-      const input = document.getElementById(`nova-tarefa-${grupoId}`);
-      const nome = input.value.trim();
-      if (!nome) return;
-      const g = grupos.find(x => x.id === grupoId);
-      if (g) {
-        g.tarefas.push({ id: Date.now(), nome, status: "pendente", prioridade: "media", prazo: "", notas: "" });
-        salvarDados();
-        renderizarQuadros();
-      }
-    }
-
-    function atualizarTarefa(grupoId, tarefaId, campo, valor) {
-      const g = grupos.find(x => x.id === grupoId);
-      if (g) {
-        const t = g.tarefas.find(x => x.id === tarefaId);
-        if (t) { t[campo] = valor; salvarDados(); renderizarQuadros(); }
-      }
-    }
-
-    function removerTarefa(grupoId, tarefaId) {
-      const g = grupos.find(x => x.id === grupoId);
-      if (g) {
-        g.tarefas = g.tarefas.filter(x => x.id !== tarefaId);
-        salvarDados();
-        renderizarQuadros();
-      }
-    }
-
-    function exportarDados() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(grupos, null, 2));
-      const a = document.createElement('a');
-      a.href = dataStr;
-      a.download = "backup_tarefas.json";
-      a.click();
-    }
-
-    function importarDados(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const dados = JSON.parse(e.target.result);
-          if (Array.isArray(dados)) {
-            grupos = dados;
-            salvarDados();
-            renderizarQuadros();
-          }
-        } catch (err) { alert("Erro ao ler o arquivo."); }
-      };
-      reader.readAsText(file);
-    }
-
-    // Inicializar
-    renderizarQuadros();
-    if (obterConfigGithub()) {
-      carregarDoGithub();
-    }
-  </script>
+    <div id="calendarContent"></div>
+  </section>
+  <div class="footer-note" id="storageNote">Dados salvos neste navegador. Anexos armazenados localmente neste dispositivo.</div>
+</main>
+<div id="modalRoot"></div>
+<div id="toast" class="toast hidden" role="status"></div>
+<script>
+(() => {
+'use strict';
+const DATA_KEY='meu_work_os_v2';
+const OLD_KEY='meu_work_os_dados_v1';
+const DB_NAME='meu_work_os_media_v1';
+const DB_STORE='files';
+const defaultColumns=[
+ {id:'programacao',name:'Programação',color:'#579bfc'},
+ {id:'conteudos',name:'Artes e Conteúdos',color:'#00a884'},
+ {id:'producao',name:'Em Produção',color:'#fdab3d'},
+ {id:'aprovacao',name:'Aprovação',color:'#a25ddc'},
+ {id:'concluido',name:'Concluído',color:'#00c875'}
+];
+let state=loadState(), currentView='board', calendarDate=new Date(), editingId=null, pendingFiles=[], toastTimer=null;
+const $=id=>document.getElementById(id);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function dateISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function parseDate(s){if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)}
+function fmtDate(s){const d=parseDate(s);return d?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.',''):''}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function loadState(){
+ try{const saved=localStorage.getItem(DATA_KEY);if(saved){const s=JSON.parse(saved);if(s&&Array.isArray(s.columns)&&Array.isArray(s.tasks))return s}}
+ catch(e){console.warn(e)}
+ try{
+  const old=JSON.parse(localStorage.getItem(OLD_KEY)||'null');
+  if(Array.isArray(old)){
+   const columns=[],tasks=[];
+   old.forEach(g=>{const col={id:String(g.id||uid()),name:g.titulo||'Grupo',color:g.cor||'#579bfc'};columns.push(col);
+    (g.tarefas||[]).forEach(t=>tasks.push({id:String(t.id||uid()),columnId:col.id,title:t.nome||'Tarefa',description:t.notas||'',status:t.status||'pendente',priority:t.prioridade||'media',dueDate:t.prazo||'',dueTime:'',labels:[],coverId:null,attachments:[],checklist:[],comments:[],createdAt:Date.now()}))
+   });if(columns.length)return {columns,tasks}
+  }
+ }catch(e){}
+ return {columns:defaultColumns.map(c=>({...c})),tasks:[
+  {id:uid(),columnId:'conteudos',title:'Planejar conteúdos da semana',description:'Organizar as próximas entregas.',status:'andamento',priority:'alta',dueDate:dateISO(new Date()),dueTime:'',labels:[{name:'Planejamento',color:'#7dd3fc'}],coverId:null,attachments:[],checklist:[],comments:[],createdAt:Date.now()}
+ ]}
+}
+function persist(){try{localStorage.setItem(DATA_KEY,JSON.stringify(state));$('storageNote').textContent='Salvo neste navegador • '+state.tasks.length+' cartões • Anexos locais neste dispositivo.'}catch(e){notify('O armazenamento está cheio. Exporte um backup e remova anexos grandes.','error')}}
+function notify(msg,type=''){const t=$('toast');t.textContent=msg;t.className='toast '+type;t.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500)}
+function getTask(id){return state.tasks.find(t=>t.id===id)}
+function getColumn(id){return state.columns.find(c=>c.id===id)}
+function priorityColor(p){return ({alta:'#a78bfa',media:'#579bfc',baixa:'#64b5f6'})[p]||'#9ca3af'}
+function taskMatches(t){const term=$('searchInput').value.trim().toLowerCase(),p=$('filterPriority').value;const text=[t.title,t.description,...(t.labels||[]).map(x=>x.name),...(t.attachments||[]).map(x=>x.name)].join(' ').toLowerCase();return (!term||text.includes(term))&&(!p||t.priority===p)}
+function render(){
+ if(currentView==='board')renderBoard();else renderCalendar();
+ $('addMainBtn').textContent=currentView==='board'?'＋ Novo cartão':'＋ Tarefa nesta data';
+}
+function renderBoard(){
+ const board=$('board');board.innerHTML='';
+ state.columns.forEach(col=>{
+  const tasks=state.tasks.filter(t=>t.columnId===col.id&&taskMatches(t));
+  const el=document.createElement('section');el.className='column';el.dataset.column=col.id;el.innerHTML=`<div class="column-head" style="--col:${esc(col.color)}"><input class="column-name" aria-label="Nome da coluna" value="${esc(col.name)}" data-rename="${esc(col.id)}"><span class="count">${tasks.length}</span><button class="icon-btn" data-col-menu="${esc(col.id)}" title="Opções da coluna">•••</button></div><div class="cards" data-drop="${esc(col.id)}">${tasks.map(cardHTML).join('')}</div><button class="add-card" data-add-card="${esc(col.id)}">＋ Adicionar um cartão</button>`;
+  board.appendChild(el);
+ });
+ const add=document.createElement('button');add.className='add-column';add.textContent='＋ Adicionar outra coluna';add.addEventListener('click',addColumn);board.appendChild(add);
+}
+function cardHTML(t){
+ const cover=(t.coverId&&t.attachments||[]).find(a=>a.id===t.coverId&&a.kind==='image');
+ const labels=(t.labels||[]).map(l=>`<span class="label-text" style="background:${esc(l.color||'#579bfc')}">${esc(l.name)}</span>`).join('');
+ const due=t.dueDate?`<span class="meta-pill">◷ ${esc(fmtDate(t.dueDate))}</span>`:'';
+ const att=t.attachments?.length?`<span class="meta-pill">▧ ${t.attachments.length}</span>`:'';
+ const checks=t.checklist?.length?`<span class="meta-pill">☑ ${(t.checklist||[]).filter(x=>x.done).length}/${t.checklist.length}</span>`:'';
+ const comments=t.comments?.length?`<span class="meta-pill">☰ ${t.comments.length}</span>`:'';
+ return `<article class="task-card" draggable="true" data-task="${esc(t.id)}">${cover?`<img class="cover" data-cover="${esc(cover.id)}" alt="" loading="lazy">`:''}<div class="card-body">${labels?`<div class="labels">${labels}</div>`:''}<div class="card-title">${esc(t.title||'Sem título')}</div><div class="card-meta">${due}<span class="meta-pill"><i class="priority-dot" style="background:${priorityColor(t.priority)}"></i>${({alta:'Alta',media:'Média',baixa:'Baixa'})[t.priority]||'Média'}</span>${att}${checks}${comments}</div></div></article>`;
+}
+function renderCovers(){
+ document.querySelectorAll('img[data-cover]').forEach(async img=>{try{const blob=await dbGet(img.dataset.cover);if(blob){const url=URL.createObjectURL(blob);img.src=url;img.onload=()=>URL.revokeObjectURL(url)}}catch(e){}});
+}
+function addColumn(){
+ const name=prompt('Nome da nova coluna:','Nova etapa');if(!name?.trim())return;
+ state.columns.push({id:uid(),name:name.trim(),color:['#579bfc','#00a884','#fdab3d','#a25ddc','#e2445c'][state.columns.length%5]});persist();render();
+}
+function renameColumn(id,name){const c=getColumn(id);if(c&&name.trim()){c.name=name.trim();persist()}}
+function columnMenu(id){
+ const c=getColumn(id);if(!c)return;
+ const action=prompt(`Opções para "${c.name}":\n1 - Alterar cor\n2 - Excluir coluna\n\nDigite 1 ou 2:`);if(action==='1'){const color=prompt('Cor hexadecimal (ex.: #579bfc):',c.color);if(color&&/^#[0-9a-f]{6}$/i.test(color)){c.color=color;persist();render()}}
+ if(action==='2'){if(state.columns.length<2){notify('Mantenha pelo menos uma coluna.','error');return}if(confirm(`Excluir "${c.name}"? Os cartões serão movidos para a primeira coluna restante.`)){const target=state.columns.find(x=>x.id!==id);state.tasks.forEach(t=>{if(t.columnId===id)t.columnId=target.id});state.columns=state.columns.filter(x=>x.id!==id);persist();render()}}
+}
+function openTask(id=null,columnId=null,dueDate=null){
+ editingId=id;pendingFiles=[];const t=id?getTask(id):{id:'',columnId:columnId||state.columns[0]?.id,title:'',description:'',status:'pendente',priority:'media',dueDate:dueDate||'',dueTime:'',labels:[],attachments:[],coverId:null,checklist:[],comments:[]};
+ if(!t)return;
+ const root=$('modalRoot');root.innerHTML=`<div class="overlay" id="taskOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">${id?'Editar cartão':'Novo cartão'}</h2><button class="icon-btn" id="closeModal" aria-label="Fechar">✕</button></div><div class="modal-content">
+ <div class="field full"><label for="taskTitle">Título *</label><input id="taskTitle" maxlength="180" value="${esc(t.title)}" placeholder="Ex.: Arte para Instagram"></div>
+ <div class="field"><label for="taskColumn">Coluna</label><select id="taskColumn">${state.columns.map(c=>`<option value="${esc(c.id)}" ${c.id===t.columnId?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>
+ <div class="field"><label for="taskStatus">Status</label><select id="taskStatus"><option value="pendente" ${t.status==='pendente'?'selected':''}>Não iniciado</option><option value="andamento" ${t.status==='andamento'?'selected':''}>Em andamento</option><option value="feito" ${t.status==='feito'?'selected':''}>Feito</option><option value="travado" ${t.status==='travado'?'selected':''}>Travado</option></select></div>
+ <div class="field"><label for="taskPriority">Prioridade</label><select id="taskPriority"><option value="baixa" ${t.priority==='baixa'?'selected':''}>Baixa</option><option value="media" ${t.priority==='media'?'selected':''}>Média</option><option value="alta" ${t.priority==='alta'?'selected':''}>Alta</option></select></div>
+ <div class="field"><label for="taskDate">Data de entrega</label><input id="taskDate" type="date" value="${esc(t.dueDate||'')}"></div>
+ <div class="field"><label for="taskTime">Horário (opcional)</label><input id="taskTime" type="time" value="${esc(t.dueTime||'')}"></div>
+ <div class="field full"><label for="taskDescription">Descrição / notas</label><textarea id="taskDescription" placeholder="Detalhes da tarefa, briefing, links...">${esc(t.description||'')}</textarea></div>
+ <div class="field full"><label for="taskLabels">Etiquetas (separe por vírgulas)</label><input id="taskLabels" value="${esc((t.labels||[]).map(x=>x.name).join(', '))}" placeholder="Instagram, Cliente, Urgente"></div>
+ <div class="field full"><div class="section-title">Checklist</div><div id="checklistArea"></div><div style="display:flex;gap:8px;margin-top:8px"><input id="checkNew" class="small-input" placeholder="Novo item do checklist" style="flex:1"><button class="btn" id="addCheck">Adicionar</button></div></div>
+ <div class="field full"><div class="section-title">Imagens e vídeos</div><div id="uploadZone" class="upload-zone">Arraste arquivos aqui ou <label for="filePicker" style="color:#8bbcff;text-decoration:underline;cursor:pointer">selecione no dispositivo</label><br><small>Imagens e vídeos • armazenamento local neste navegador</small><input id="filePicker" class="hidden" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" multiple></div><div id="attachmentArea" class="attachments" style="margin-top:10px"></div></div>
+ <div class="field full"><div class="section-title">Comentários</div><div id="commentsArea"></div><div style="display:flex;gap:8px;margin-top:8px"><input id="commentNew" class="small-input" placeholder="Adicionar comentário..." style="flex:1"><button class="btn" id="addComment">Enviar</button></div></div>
+ </div><div class="modal-actions">${id?'<button class="btn danger" id="deleteTask">Excluir</button><button class="btn" id="duplicateTask">Duplicar</button>':''}<span class="push"></span><button class="btn" id="cancelTask">Cancelar</button><button class="btn primary" id="saveTask">Salvar cartão</button></div></section></div>`;
+ let checklist=(t.checklist||[]).map(x=>({...x})),comments=(t.comments||[]).map(x=>({...x})),attachments=(t.attachments||[]).map(x=>({...x}));
+ const drawChecklist=()=>{$('checklistArea').innerHTML=checklist.length?checklist.map((x,i)=>`<div class="check-row ${x.done?'done':''}"><input type="checkbox" data-check="${i}" ${x.done?'checked':''}><span>${esc(x.text)}</span><button class="icon-btn" data-del-check="${i}">✕</button></div>`).join(''):'<div class="subtitle">Nenhum item adicionado.</div>'};
+ const drawComments=()=>{$('commentsArea').innerHTML=comments.length?comments.map(c=>`<div class="check-row"><span>${esc(c.text)} <small style="color:#8398b2">• ${esc(c.date||'')}</small></span><button class="icon-btn" data-del-comment="${esc(c.id)}">✕</button></div>`).join(''):'<div class="subtitle">Nenhum comentário ainda.</div>'};
+ const drawAttachments=async()=>{const area=$('attachmentArea');area.innerHTML='';for(const a of attachments){const item=document.createElement('div');item.className='attachment';let media;if(a.kind==='image'){media=document.createElement('img');const blob=await dbGet(a.id);if(blob)media.src=URL.createObjectURL(blob);media.alt=a.name}else{media=document.createElement('video');media.controls=true;media.preload='metadata';const blob=await dbGet(a.id);if(blob)media.src=URL.createObjectURL(blob)}item.appendChild(media);const name=document.createElement('div');name.className='att-name';name.textContent=a.name;item.appendChild(name);const rm=document.createElement('button');rm.className='remove-att';rm.textContent='✕';rm.title='Remover anexo';rm.addEventListener('click',async()=>{if(a.id===t.coverId)t.coverId=null;attachments=attachments.filter(x=>x.id!==a.id);pendingFiles=pendingFiles.filter(x=>x.id!==a.id);await dbDelete(a.id);drawAttachments()});item.appendChild(rm);if(a.kind==='image'){const cover=document.createElement('button');cover.className='remove-att';cover.style.right='30px';cover.textContent=a.id===t.coverId?'★':'☆';cover.title='Definir como capa';cover.addEventListener('click',()=>{t.coverId=a.id;drawAttachments()});item.appendChild(cover)}area.appendChild(item)}};
+ drawChecklist();drawComments();drawAttachments();
+ $('closeModal').onclick=closeModal;$('cancelTask').onclick=closeModal;$('taskOverlay').addEventListener('click',e=>{if(e.target.id==='taskOverlay')closeModal()});
+ $('addCheck').onclick=()=>{const v=$('checkNew').value.trim();if(v){checklist.push({id:uid(),text:v,done:false});$('checkNew').value='';drawChecklist()}};
+ $('checkNew').addEventListener('keydown',e=>{if(e.key==='Enter')$('addCheck').click()});
+ $('checklistArea').onclick=e=>{const d=e.target.closest('[data-del-check]');if(d){checklist.splice(Number(d.dataset.delCheck),1);drawChecklist()}};
+ $('checklistArea').onchange=e=>{if(e.target.dataset.check!==undefined){checklist[Number(e.target.dataset.check)].done=e.target.checked;drawChecklist()}};
+ $('addComment').onclick=()=>{const v=$('commentNew').value.trim();if(v){comments.push({id:uid(),text:v,date:new Date().toLocaleString('pt-BR')});$('commentNew').value='';drawComments()}};
+ $('commentNew').addEventListener('keydown',e=>{if(e.key==='Enter')$('addComment').click()});
+ $('commentsArea').onclick=e=>{const d=e.target.closest('[data-del-comment]');if(d){comments=comments.filter(x=>x.id!==d.dataset.delComment);drawComments()}};
+ $('filePicker').onchange=async e=>{await addFiles(e.target.files,attachments,drawAttachments);e.target.value=''};
+ const zone=$('uploadZone');zone.ondragover=e=>{e.preventDefault();zone.classList.add('dragover')};zone.ondragleave=()=>zone.classList.remove('dragover');zone.ondrop=async e=>{e.preventDefault();zone.classList.remove('dragover');await addFiles(e.dataTransfer.files,attachments,drawAttachments)};
+ if(id){$('deleteTask').onclick=()=>{if(confirm('Excluir este cartão permanentemente?')){const task=getTask(id);state.tasks=state.tasks.filter(x=>x.id!==id);persist();closeModal();render()}};$('duplicateTask').onclick=()=>{const copy=JSON.parse(JSON.stringify(getTask(id)));copy.id=uid();copy.title+=' (cópia)';copy.createdAt=Date.now();state.tasks.push(copy);persist();closeModal();render();notify('Cartão duplicado. Os anexos locais foram referenciados pelo mesmo cartão.')}}
+ $('saveTask').onclick=async()=>{
+  const title=$('taskTitle').value.trim();if(!title){notify('Informe um título para o cartão.','error');$('taskTitle').focus();return}
+  const labels=$('taskLabels').value.split(',').map(x=>x.trim()).filter(Boolean).map((name,i)=>({name,color:['#7dd3fc','#86efac','#fcd34d','#c4b5fd','#fda4af'][i%5]}));
+  const obj={...(id?getTask(id):{}),id:id||uid(),columnId:$('taskColumn').value,title,description:$('taskDescription').value.trim(),status:$('taskStatus').value,priority:$('taskPriority').value,dueDate:$('taskDate').value,dueTime:$('taskTime').value,labels,attachments,coverId:t.coverId||null,checklist,comments,createdAt:t.createdAt||Date.now()};
+  if(id){const ix=state.tasks.findIndex(x=>x.id===id);if(ix>=0)state.tasks[ix]=obj}else state.tasks.push(obj);
+  persist();closeModal();render();notify('Cartão salvo com sucesso.');
+ };
+}
+async function addFiles(fileList,attachments,draw){
+ const files=Array.from(fileList||[]);for(const file of files){
+  if(!(file.type.startsWith('image/')||['video/mp4','video/webm','video/quicktime'].includes(file.type))){notify(`Formato não suportado: ${file.name}`,'error');continue}
+  if(file.size>250*1024*1024){notify(`${file.name} excede o limite de 250 MB.`,'error');continue}
+  const id=uid();try{await dbPut(id,file);attachments.push({id,name:file.name,type:file.type,size:file.size,kind:file.type.startsWith('image/')?'image':'video'});}catch(e){notify('Não foi possível salvar o arquivo localmente. Verifique o espaço disponível.','error')}
+ }
+ draw();
+}
+function closeModal(){$('modalRoot').innerHTML='';editingId=null;pendingFiles=[]}
+function renderCalendar(){
+ const mode=$('calendarMode').value,year=calendarDate.getFullYear(),month=calendarDate.getMonth();
+ const monthName=calendarDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});$('calendarMonth').textContent=mode==='day'?calendarDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):mode==='week'?`Semana de ${fmtDate(dateISO(startOfWeek(calendarDate)))}`:monthName.charAt(0).toUpperCase()+monthName.slice(1);
+ const root=$('calendarContent');root.innerHTML='';
+ if(mode==='day'){const d=dateISO(calendarDate);root.appendChild(makeDayList([d]));return}
+ let days=[];
+ if(mode==='month'){const first=new Date(year,month,1,12),start=new Date(year,month,1-first.getDay(),12);for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}}
+ else{const start=startOfWeek(calendarDate);for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}}
+ const grid=document.createElement('div');grid.className='calendar-grid';
+ ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(x=>{const h=document.createElement('div');h.className='weekday';h.textContent=x;grid.appendChild(h)});
+ days.forEach(d=>{
+  const iso=dateISO(d),cell=document.createElement('div');cell.className='day'+(d.getMonth()!==month&&mode==='month'?' outside':'')+(iso===dateISO(new Date())?' today':'');cell.dataset-day=iso;
+  cell.innerHTML=`<div class="day-number"><span>${d.getDate()}</span><button class="icon-btn" data-add-date="${iso}" title="Criar tarefa">＋</button></div>`;
+  state.tasks.filter(t=>t.dueDate===iso&&taskMatches(t)).forEach(t=>{const b=document.createElement('button');b.className='calendar-task';b.style.setProperty('--task-color',priorityColor(t.priority));b.textContent=t.title;b.title=t.title;b.addEventListener('click',()=>openTask(t.id));cell.appendChild(b)});
+  cell.addEventListener('dblclick',e=>{if(!e.target.closest('button'))openTask(null,null,iso)});
+  grid.appendChild(cell);
+ });root.appendChild(grid);
+}
+function startOfWeek(date){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12);d.setDate(d.getDate()-d.getDay());return d}
+function makeDayList(dates){const wrap=document.createElement('div');wrap.style.maxWidth='900px';dates.forEach(iso=>{const d=parseDate(iso),section=document.createElement('section');section.style.cssText='background:#0b2445b8;border:1px solid #ffffff20;border-radius:10px;padding:14px;margin-bottom:10px';section.innerHTML=`<h3 style="margin:0 0 12px;font-size:15px">${esc(d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</h3>`;const tasks=state.tasks.filter(t=>t.dueDate===iso&&taskMatches(t));if(!tasks.length){const p=document.createElement('p');p.className='subtitle';p.textContent='Nenhuma tarefa com prazo neste dia.';section.appendChild(p)}tasks.forEach(t=>{const b=document.createElement('button');b.className='calendar-task';b.style.cssText+=`;display:block;font-size:13px;padding:10px;width:100%;margin:6px 0`;b.textContent=`${t.dueTime? t.dueTime+' · ':''}${t.title} — ${getColumn(t.columnId)?.name||'Sem coluna'}`;b.addEventListener('click',()=>openTask(t.id));section.appendChild(b)});const add=document.createElement('button');add.className='btn';add.textContent='＋ Adicionar tarefa';add.onclick=()=>openTask(null,null,iso);section.appendChild(add);wrap.appendChild(section)});return wrap}
+function changePeriod(delta){const mode=$('calendarMode').value;if(mode==='month')calendarDate.setMonth(calendarDate.getMonth()+delta);else if(mode==='week')calendarDate.setDate(calendarDate.getDate()+7*delta);else calendarDate.setDate(calendarDate.getDate()+delta);renderCalendar()}
+function switchView(v){currentView=v;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));$('boardView').classList.toggle('hidden',v!=='board');$('calendarView').classList.toggle('hidden',v!=='calendar');$('viewTitle').textContent=v==='board'?'Quadro principal':'Calendário de tarefas';$('viewSubtitle').textContent=v==='board'?'Organize projetos, conteúdos e entregas.':'Visualize prazos e crie tarefas por data.';render()}
+function exportJSON(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='meu-work-os-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Backup JSON exportado. Observação: os arquivos de mídia não são incluídos no JSON.')}
+function importJSON(file){const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!data||!Array.isArray(data.columns)||!Array.isArray(data.tasks))throw new Error('Estrutura inválida');if(!confirm('Importar este backup substituirá os cartões e colunas atuais. Continuar?'))return;state=data;persist();render();notify('Backup importado.')}catch(e){notify('Não foi possível importar: JSON inválido ou incompatível.','error')}};r.readAsText(file)}
+function openQuickAdd(){if(currentView==='calendar')openTask(null,null,dateISO(calendarDate));else openTask()}
+function dbOpen(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(DB_STORE))req.result.createObjectStore(DB_STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function dbPut(id,blob){const db=await dbOpen();return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put(blob,id);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}})}
+async function dbGet(id){const db=await dbOpen();return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readonly'),req=tx.objectStore(DB_STORE).get(id);req.onsuccess=()=>{db.close();resolve(req.result||null)};req.onerror=()=>{db.close();reject(req.error)}})}
+async function dbDelete(id){try{const db=await dbOpen();return new Promise(resolve=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).delete(id);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();resolve()}})}catch(e){}}
+$('board').addEventListener('click',e=>{const card=e.target.closest('[data-task]');if(card)openTask(card.dataset.task);const add=e.target.closest('[data-add-card]');if(add)openTask(null,add.dataset.addCard);const menu=e.target.closest('[data-col-menu]');if(menu)columnMenu(menu.dataset.colMenu);const date=e.target.closest('[data-add-date]');if(date)openTask(null,null,date.dataset.addDate)});
+$('board').addEventListener('change',e=>{const input=e.target.closest('[data-rename]');if(input)renameColumn(input.dataset.rename,input.value)});
+$('board').addEventListener('dragstart',e=>{const card=e.target.closest('[data-task]');if(card){e.dataTransfer.setData('text/task-id',card.dataset.task);e.dataTransfer.effectAllowed='move';card.classList.add('dragging')}});
+$('board').addEventListener('dragend',e=>{const card=e.target.closest('[data-task]');if(card)card.classList.remove('dragging');document.querySelectorAll('.drop-hint').forEach(x=>x.classList.remove('drop-hint'))});
+$('board').addEventListener('dragover',e=>{const drop=e.target.closest('[data-drop]');if(drop){e.preventDefault();drop.classList.add('drop-hint');e.dataTransfer.dropEffect='move'}});
+$('board').addEventListener('dragleave',e=>{const drop=e.target.closest('[data-drop]');if(drop&&!drop.contains(e.relatedTarget))drop.classList.remove('drop-hint')});
+$('board').addEventListener('drop',e=>{const drop=e.target.closest('[data-drop]');if(!drop)return;e.preventDefault();drop.classList.remove('drop-hint');const id=e.dataTransfer.getData('text/task-id'),t=getTask(id);if(t){t.columnId=drop.dataset.drop;const c=getColumn(t.columnId);if(c&&/conclu/i.test(c.name))t.status='feito';else if(t.status==='feito')t.status='andamento';persist();render();notify('Cartão movido.')}});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+$('searchInput').addEventListener('input',render);$('filterPriority').addEventListener('change',render);$('addMainBtn').addEventListener('click',openQuickAdd);
+$('todayBtn').addEventListener('click',()=>{calendarDate=new Date();if(currentView==='calendar')renderCalendar();else notify('Hoje: '+new Date().toLocaleDateString('pt-BR'))});
+$('prevPeriod').addEventListener('click',()=>changePeriod(-1));$('nextPeriod').addEventListener('click',()=>changePeriod(1));$('calendarMode').addEventListener('change',renderCalendar);
+$('backupBtn').addEventListener('click',exportJSON);$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value=''});
+$('workspaceName').addEventListener('click',()=>{const name=prompt('Nome do espaço de trabalho:','Artes e Conteúdos');if(name?.trim()){$('workspaceName').textContent=name.trim()+' ▾';localStorage.setItem('meu_work_os_workspace',name.trim())}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('searchInput').focus()}});
+const savedWorkspace=localStorage.getItem('meu_work_os_workspace');if(savedWorkspace)$('workspaceName').textContent=savedWorkspace+' ▾';
+render();
+if('indexedDB' in window){$('storageNote').textContent='Salvamento local ativo • arquivos guardados no IndexedDB deste navegador. Configure nuvem para compartilhar anexos entre dispositivos.'}else{$('storageNote').textContent='Este navegador não oferece IndexedDB; anexos podem não funcionar.'}
+})();
+</script>
 </body>
-</html>
+</html>'''
+path = Path("/mnt/data/meu_work_os_atualizado.html")
+path.write_text(html, encoding="utf-8")
+print(f"Arquivo criado: {path} ({path.stat().st_size:,} bytes)")
