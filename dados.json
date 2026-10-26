@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "titulo": "Para Fazer Esta Semana",
+    "cor": "#579bfc",
+    "tarefas": [
+      {
+        "id": 101,
+        "nome": "Planejar metas do mês",
+        "status": "feito",
+        "prioridade": "alta",
+        "prazo": "2025-05-15",
+        "notas": "Revisar orçamento"
+      },
+      {
+        "id": 102,
+        "nome": "Configurar banco no GitHub",
+        "status": "andamento",
+        "prioridade": "media",
+        "prazo": "2025-05-16",
+        "notas": "Gerar token de acesso"
+      }
+    ]
+  }
+]
