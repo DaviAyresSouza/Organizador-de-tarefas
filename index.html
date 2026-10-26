@@ -10,12 +10,10 @@
     body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6f8; }
     .status-select { appearance: none; text-align: center; text-align-last: center; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
     .status-select:hover { opacity: 0.9; }
-    /* Cores estilo Monday */
     .st-feito { background-color: #00c875; color: white; }
     .st-andamento { background-color: #fdab3d; color: white; }
     .st-travado { background-color: #e2445c; color: white; }
     .st-pendente { background-color: #c4c4c4; color: white; }
-    
     .pr-alta { background-color: #401694; color: white; }
     .pr-media { background-color: #5559df; color: white; }
     .pr-baixa { background-color: #579bfc; color: white; }
@@ -32,7 +30,7 @@
         </div>
       </div>
       <h2 class="text-2xl font-bold text-gray-800 mb-2">Acesso Restrito</h2>
-      <p class="text-sm text-gray-500 mb-6">Digite sua senha para acessar seu organizador pessoal</p>
+      <p class="text-sm text-gray-500 mb-6">Digite sua senha para acessar seu organizador</p>
       <input type="password" id="password-input" placeholder="Senha de acesso" 
         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg tracking-widest"
         onkeypress="if(event.key === 'Enter') verificarSenha()">
@@ -43,6 +41,41 @@
     </div>
   </div>
 
+  <!-- MODAL DE CONFIGURAÇÃO DO GITHUB -->
+  <div id="github-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-40 hidden">
+    <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+          <i class="fa-brands fa-github text-xl"></i> Banco de Dados no GitHub
+        </h3>
+        <button onclick="fecharModalGithub()" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-gray-500 mb-4">
+        Os dados serão salvos em um arquivo <code>dados.json</code> dentro do seu repositório. As credenciais abaixo ficam salvas apenas no seu navegador.
+      </p>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Seu Usuário do GitHub</label>
+          <input type="text" id="gh-owner" placeholder="Ex: joaosilva" class="w-full px-3 py-2 border rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Nome do Repositório</label>
+          <input type="text" id="gh-repo" placeholder="Ex: meu-organizador" class="w-full px-3 py-2 border rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Personal Access Token (Chave)</label>
+          <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-lg">
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="fecharModalGithub()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+        <button onclick="salvarConfigGithub()" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg">Salvar e Sincronizar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- BARRA LATERAL (SIDEBAR) -->
   <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between">
     <div>
@@ -50,7 +83,7 @@
         <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold">M</div>
         <span class="font-bold text-lg tracking-wide">Meu Work OS</span>
       </div>
-      <div class="p-4">
+      <div class="p-4 space-y-2">
         <p class="text-xs uppercase text-slate-400 font-semibold mb-3">Espaço de Trabalho</p>
         <button class="w-full flex items-center gap-3 px-3 py-2 bg-blue-600 rounded-lg text-sm font-medium">
           <i class="fa-solid fa-table-columns"></i> Quadro Principal
@@ -59,7 +92,22 @@
     </div>
 
     <div class="p-4 border-t border-slate-800 space-y-2">
-      <p class="text-xs uppercase text-slate-400 font-semibold mb-2">Backup de Dados</p>
+      <!-- Status da Nuvem GitHub -->
+      <div class="mb-3 p-2.5 bg-slate-800 rounded-lg flex items-center justify-between">
+        <div class="flex items-center gap-2 text-xs">
+          <i id="sync-icon" class="fa-solid fa-cloud text-slate-400"></i>
+          <span id="sync-status" class="text-slate-300">Modo Local</span>
+        </div>
+        <button onclick="carregarDoGithub()" title="Forçar atualização da nuvem" class="text-slate-400 hover:text-white text-xs">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
+
+      <button onclick="abrirModalGithub()" class="w-full flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 rounded text-xs font-medium transition">
+        <i class="fa-brands fa-github"></i> Configurar Nuvem GitHub
+      </button>
+
+      <p class="text-xs uppercase text-slate-400 font-semibold pt-2 mb-1">Backup Manual</p>
       <button onclick="exportarDados()" class="w-full flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition">
         <i class="fa-solid fa-download"></i> Exportar JSON
       </button>
@@ -67,7 +115,7 @@
         <i class="fa-solid fa-upload"></i> Importar JSON
         <input type="file" id="import-file" class="hidden" accept=".json" onchange="importarDados(event)">
       </label>
-      <button onclick="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-slate-800 rounded text-xs transition mt-4">
+      <button onclick="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-slate-800 rounded text-xs transition mt-2">
         <i class="fa-solid fa-lock"></i> Bloquear Tela
       </button>
     </div>
@@ -75,11 +123,10 @@
 
   <!-- ÁREA PRINCIPAL -->
   <main class="flex-1 flex flex-col overflow-hidden">
-    <!-- CABEÇALHO -->
     <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center">
       <div>
         <h1 class="text-2xl font-bold text-gray-800">Organizador de Tarefas Pessoal</h1>
-        <p class="text-sm text-gray-500">Gerencie seus projetos, prazos e prioridades em um só lugar</p>
+        <p class="text-sm text-gray-500">Gerencie seus projetos sincronizados com o GitHub</p>
       </div>
       <div class="flex items-center gap-4">
         <div class="relative">
@@ -93,17 +140,16 @@
       </div>
     </header>
 
-    <!-- CONTEÚDO DOS QUADROS -->
-    <div id="boards-container" class="flex-1 overflow-y-auto p-8 space-y-8">
-      <!-- Os grupos serão inseridos aqui via JavaScript -->
-    </div>
+    <div id="boards-container" class="flex-1 overflow-y-auto p-8 space-y-8"></div>
   </main>
 
   <script>
     const SENHA_CORRETA = "301523";
     const STORAGE_KEY = "meu_work_os_dados_v1";
+    const GH_CONFIG_KEY = "meu_work_os_gh_config";
+    let arquivoShaAtual = null;
+    let timeoutSalvar = null;
 
-    // Dados iniciais padrão
     let grupos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
       {
         id: 1,
@@ -111,20 +157,12 @@
         cor: "#579bfc",
         tarefas: [
           { id: 101, nome: "Planejar metas do mês", status: "feito", prioridade: "alta", prazo: "2025-05-15", notas: "Revisar orçamento" },
-          { id: 102, nome: "Configurar repositório no GitHub", status: "andamento", prioridade: "media", prazo: "2025-05-16", notas: "Ativar GitHub Pages" }
-        ]
-      },
-      {
-        id: 2,
-        titulo: "Projetos Futuros / Ideias",
-        cor: "#a25ddc",
-        tarefas: [
-          { id: 201, nome: "Estudar novas ferramentas", status: "pendente", prioridade: "baixa", prazo: "", notas: "Separar 1h por dia" }
+          { id: 102, nome: "Configurar banco no GitHub", status: "andamento", prioridade: "media", prazo: "2025-05-16", notas: "Gerar token de acesso" }
         ]
       }
     ];
 
-    // Verificação de Login
+    // --- LOGIN ---
     function verificarSenha() {
       const input = document.getElementById("password-input").value;
       const error = document.getElementById("login-error");
@@ -147,12 +185,141 @@
       document.getElementById("login-screen").classList.add("hidden");
     }
 
-    // Salvar no LocalStorage
-    function salvarDados() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
+    // --- INTEGRAÇÃO GITHUB API (BANCO DE DADOS) ---
+    function obterConfigGithub() {
+      return JSON.parse(localStorage.getItem(GH_CONFIG_KEY));
     }
 
-    // Renderizar interface
+    function atualizarStatusSync(texto, corIcone, girando = false) {
+      document.getElementById("sync-status").innerText = texto;
+      const icon = document.getElementById("sync-icon");
+      icon.className = `fa-solid ${girando ? 'fa-spinner fa-spin' : 'fa-cloud'} ${corIcone}`;
+    }
+
+    function abrirModalGithub() {
+      const cfg = obterConfigGithub() || {};
+      document.getElementById("gh-owner").value = cfg.owner || "";
+      document.getElementById("gh-repo").value = cfg.repo || "";
+      document.getElementById("gh-token").value = cfg.token || "";
+      document.getElementById("github-modal").classList.remove("hidden");
+    }
+
+    function fecharModalGithub() {
+      document.getElementById("github-modal").classList.add("hidden");
+    }
+
+    async function salvarConfigGithub() {
+      const owner = document.getElementById("gh-owner").value.trim();
+      const repo = document.getElementById("gh-repo").value.trim();
+      const token = document.getElementById("gh-token").value.trim();
+
+      if (!owner || !repo || !token) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      localStorage.setItem(GH_CONFIG_KEY, JSON.stringify({ owner, repo, token }));
+      fecharModalGithub();
+      await carregarDoGithub();
+    }
+
+    // Funções de conversão Base64 compatíveis com acentos (UTF-8)
+    function utf8ParaBase64(str) {
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
+    }
+    function base64ParaUtf8(str) {
+      return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    }
+
+    async function carregarDoGithub() {
+      const cfg = obterConfigGithub();
+      if (!cfg) return;
+
+      atualizarStatusSync("Carregando...", "text-blue-400", true);
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/dados.json`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { "Authorization": `Bearer ${cfg.token}`, "Accept": "application/vnd.github.v3+json" }
+        });
+
+        if (res.status === 404) {
+          // Arquivo ainda não existe no repositório, vamos criá-lo com os dados atuais
+          await salvarNoGithub();
+          return;
+        }
+
+        if (!res.ok) throw new Error("Erro ao acessar repositório");
+
+        const data = await res.json();
+        arquivoShaAtual = data.sha;
+        const conteudoJson = base64ParaUtf8(data.content.replace(/\n/g, ''));
+        grupos = JSON.parse(conteudoJson);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
+        renderizarQuadros();
+        atualizarStatusSync("Sincronizado", "text-emerald-400");
+      } catch (err) {
+        console.error(err);
+        atualizarStatusSync("Erro na Nuvem", "text-red-400");
+      }
+    }
+
+    async function salvarNoGithub() {
+      const cfg = obterConfigGithub();
+      if (!cfg) return;
+
+      atualizarStatusSync("Salvando...", "text-amber-400", true);
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/dados.json`;
+
+      try {
+        // Busca o SHA mais recente se ainda não tivermos
+        if (!arquivoShaAtual) {
+          const check = await fetch(url, {
+            headers: { "Authorization": `Bearer ${cfg.token}` }
+          });
+          if (check.ok) {
+            const checkData = await check.json();
+            arquivoShaAtual = checkData.sha;
+          }
+        }
+
+        const body = {
+          message: "Atualizando tarefas via Work OS",
+          content: utf8ParaBase64(JSON.stringify(grupos, null, 2))
+        };
+        if (arquivoShaAtual) body.sha = arquivoShaAtual;
+
+        const res = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${cfg.token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) throw new Error("Falha ao gravar no GitHub");
+
+        const resData = await res.json();
+        arquivoShaAtual = resData.content.sha;
+        atualizarStatusSync("Salvo no GitHub", "text-emerald-400");
+      } catch (err) {
+        console.error(err);
+        atualizarStatusSync("Erro ao salvar", "text-red-400");
+      }
+    }
+
+    function salvarDados() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(grupos));
+      // Agenda o salvamento no GitHub (aguarda 1s após a última digitação para não sobrecarregar a API)
+      if (obterConfigGithub()) {
+        clearTimeout(timeoutSalvar);
+        atualizarStatusSync("Modificado...", "text-amber-400");
+        timeoutSalvar = setTimeout(() => salvarNoGithub(), 1000);
+      }
+    }
+
+    // --- RENDERIZAÇÃO E LÓGICA DO QUADRO ---
     function renderizarQuadros() {
       const container = document.getElementById("boards-container");
       const termoBusca = document.getElementById("search-input").value.toLowerCase();
@@ -163,7 +330,6 @@
           t.nome.toLowerCase().includes(termoBusca) || t.notas.toLowerCase().includes(termoBusca)
         );
 
-        // Cálculo da barra de progresso
         const total = grupo.tarefas.length || 1;
         const concluidas = grupo.tarefas.filter(t => t.status === 'feito').length;
         const emAndamento = grupo.tarefas.filter(t => t.status === 'andamento').length;
@@ -173,7 +339,6 @@
         grupoEl.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden";
         
         grupoEl.innerHTML = `
-          <!-- Cabeçalho do Grupo -->
           <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100" style="border-left: 6px solid ${grupo.cor}">
             <div class="flex items-center gap-3">
               <input type="text" value="${grupo.titulo}" 
@@ -186,7 +351,6 @@
             </button>
           </div>
 
-          <!-- Tabela de Tarefas -->
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -245,15 +409,12 @@
             </table>
           </div>
 
-          <!-- Rodapé do Grupo (Adicionar Tarefa + Barra de Progresso) -->
           <div class="bg-gray-50 px-4 py-2.5 flex justify-between items-center border-t border-gray-100">
             <div class="flex items-center gap-2 w-1/2">
-              <input type="text" id="nova-tarefa-${grupo.id}" placeholder="+ Adicionar tarefa" 
+              <input type="text" id="nova-tarefa-${grupo.id}" placeholder="+ Adicionar tarefa e pressionar Enter" 
                 onkeypress="if(event.key === 'Enter') adicionarTarefa(${grupo.id})"
                 class="text-sm bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 rounded px-2 py-1 w-full">
             </div>
-            
-            <!-- Barra de Progresso Visual -->
             <div class="w-48 h-4 bg-gray-200 rounded-full overflow-hidden flex" title="Progresso do Grupo">
               <div style="width: ${(concluidas/total)*100}%" class="st-feito h-full"></div>
               <div style="width: ${(emAndamento/total)*100}%" class="st-andamento h-full"></div>
@@ -265,16 +426,9 @@
       });
     }
 
-    // Funções de Manipulação
     function adicionarGrupo() {
       const cores = ["#579bfc", "#a25ddc", "#00c875", "#fdab3d", "#e2445c", "#0086c0"];
-      const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
-      grupos.push({
-        id: Date.now(),
-        titulo: "Novo Grupo",
-        cor: corAleatoria,
-        tarefas: []
-      });
+      grupos.push({ id: Date.now(), titulo: "Novo Grupo", cor: cores[Math.floor(Math.random() * cores.length)], tarefas: [] });
       salvarDados();
       renderizarQuadros();
     }
@@ -285,7 +439,7 @@
     }
 
     function removerGrupo(grupoId) {
-      if (confirm("Tem certeza que deseja excluir este grupo e todas as tarefas dele?")) {
+      if (confirm("Excluir este grupo e todas as tarefas dele?")) {
         grupos = grupos.filter(x => x.id !== grupoId);
         salvarDados();
         renderizarQuadros();
@@ -296,17 +450,9 @@
       const input = document.getElementById(`nova-tarefa-${grupoId}`);
       const nome = input.value.trim();
       if (!nome) return;
-
       const g = grupos.find(x => x.id === grupoId);
       if (g) {
-        g.tarefas.push({
-          id: Date.now(),
-          nome: nome,
-          status: "pendente",
-          prioridade: "media",
-          prazo: "",
-          notas: ""
-        });
+        g.tarefas.push({ id: Date.now(), nome, status: "pendente", prioridade: "media", prazo: "", notas: "" });
         salvarDados();
         renderizarQuadros();
       }
@@ -316,11 +462,7 @@
       const g = grupos.find(x => x.id === grupoId);
       if (g) {
         const t = g.tarefas.find(x => x.id === tarefaId);
-        if (t) {
-          t[campo] = valor;
-          salvarDados();
-          renderizarQuadros();
-        }
+        if (t) { t[campo] = valor; salvarDados(); renderizarQuadros(); }
       }
     }
 
@@ -333,15 +475,12 @@
       }
     }
 
-    // Exportar e Importar Backup
     function exportarDados() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(grupos, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "backup_tarefas.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = "backup_tarefas.json";
+      a.click();
     }
 
     function importarDados(event) {
@@ -350,22 +489,22 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
-          const dadosImportados = JSON.parse(e.target.result);
-          if (Array.isArray(dadosImportados)) {
-            grupos = dadosImportados;
+          const dados = JSON.parse(e.target.result);
+          if (Array.isArray(dados)) {
+            grupos = dados;
             salvarDados();
             renderizarQuadros();
-            alert("Backup restaurado com sucesso!");
           }
-        } catch (err) {
-          alert("Erro ao ler o arquivo de backup.");
-        }
+        } catch (err) { alert("Erro ao ler o arquivo."); }
       };
       reader.readAsText(file);
     }
 
     // Inicializar
     renderizarQuadros();
+    if (obterConfigGithub()) {
+      carregarDoGithub();
+    }
   </script>
 </body>
 </html>
