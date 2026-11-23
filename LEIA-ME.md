@@ -1,26 +1,28 @@
-# Meu Work OS · versão revisada
+# Meu Work OS com Supabase
 
-O organizador roda em GitHub Pages como uma aplicação estática. O site pode continuar no repositório público atual. A sincronização usa um arquivo JSON em um segundo repositório, privado. O quadro também funciona com a cópia local do navegador.
+O app mantém o Quadro, a Lista e o Calendário da versão revisada. Tarefas são sincronizadas com o banco do Supabase e os arquivos de imagem e vídeo usam o bucket privado `workos-media`.
 
-## Prévia local
+## Usar o projeto Supabase que você já tem
 
-Extraia o ZIP. Abra a pasta, execute `python -m http.server 8000` e acesse [localhost:8000](http://localhost:8000). O teste local usa uma origem diferente da do site publicado e começa com um quadro vazio. O arquivo `dados.json` contém os exemplos que vieram no ZIP original e pode ser usado para testar a importação.
+1. Abra o app depois de publicar os arquivos desta versão no endereço atual. O app tenta reutilizar a configuração e a sessão da versão anterior salvas nesse navegador.
+2. Se precisar configurar, clique em **Modo local**, preencha a URL HTTPS do projeto e a chave pública **publishable** ou **anon**, e salve. Use a mesma conta de e-mail e senha para carregar seu quadro antigo.
+3. Se houver diferenças entre a cópia local e o quadro do Supabase, escolha qual versão deseja usar. Você pode exportar a versão substituída na janela de sincronização. Ao entrar, o app faz uma leitura antes de gravar.
+4. Se tiver usado o GitHub para armazenar tarefas, exporte o JSON da versão anterior e importe pelo menu **Importar backup**. O app lê os backups V1, V2 e V3.
 
-## Migração e publicação
+O app usa o mesmo esquema da V2, `public.workspaces` e `workos-media`. Uma instalação que já sincroniza nesse projeto pode continuar usando o esquema existente. O SQL incluído pode ser reaplicado para explicitar permissões das tabelas e políticas de acesso por usuário. Ele não apaga tarefas nem arquivos.
 
-1. Antes de substituir a versão antiga, abra o site atual. Se suas tarefas estão no Supabase, entre na conta antiga, sincronize e use **Exportar backup JSON**. Baixe também os arquivos do Storage que precisar conservar. O JSON antigo contém referências a esses arquivos. Ele não contém os binários.
-2. Coloque `index.html`, `estilos.css`, `app.js` e `github.js` na pasta que o GitHub Pages já publica, normalmente a raiz de `main`. O projeto dispensa uma etapa de build.
-3. Abra o mesmo endereço que você já usava. Tarefas e mídias locais da V2 são lidas nesse navegador e nessa origem. Para dados que estavam apenas no Supabase, use **Importar backup**. O importador aceita a lista V1, o backup V2 e o backup atual.
-4. Selecione uma tarefa para anexar novamente os arquivos baixados da versão antiga. Links HTTP ou HTTPS acompanham a tarefa na sincronização. Arquivos enviados ao editor ficam no navegador de origem.
+## Configurar um projeto Supabase novo
 
-## Conectar o GitHub
+1. Execute `supabase_setup.sql` no SQL Editor do Supabase. Use o esquema `public` na Data API.
+2. Habilite autenticação por e-mail e senha e configure a URL do site para confirmação de cadastro. Crie uma conta pelo app ou use uma já cadastrada.
+3. No app, clique em **Modo local**, configure a URL e a chave pública do projeto, depois entre. Credenciais administrativas são desnecessárias.
 
-1. Crie um repositório **privado** dedicado aos dados. Marque a opção de adicionar um README na criação.
-2. Nas [configurações de tokens do GitHub](https://github.com/settings/personal-access-tokens), gere um *fine-grained personal access token*. Restrinja o acesso ao repositório privado e configure **Contents** como **Read and write**.
-3. No app, clique em **Modo local**, informe `usuário/repositório` e cole o token diretamente no formulário do app. Clique em **Conectar**.
-4. O app cria ou lê `work-os.json` na branch padrão. Durante a sessão, alterações são enviadas automaticamente após uma breve pausa. Use **Sincronizar agora** para buscar alterações de outro dispositivo ou reenviar uma gravação que falhou.
-5. Ao recarregar a página, reconecte para voltar a sincronizar. O token fica em memória durante a sessão. A cópia local continua disponível.
+Imagens e vídeos de até 40 MB são enviados na sincronização, respeitando o limite do Storage do projeto. Uma mídia que só existe em outro navegador ou projeto precisa ser anexada novamente. O backup JSON exporta tarefas, links e referências aos arquivos de mídia.
 
-Quando o GitHub e o navegador têm versões divergentes, o app pede para você escolher qual usar. Ao usar a versão remota, a versão local anterior pode ser exportada na janela de sincronização. Ao enviar a versão local, a versão anterior fica no histórico do repositório. Essa escolha substitui o quadro inteiro. Exporte a cópia local antes de combinar manualmente alterações de versões diferentes.
+## Publicar ou testar
 
-O limite de sincronização do JSON é 900 KB. O histórico de commits guarda versões anteriores do quadro. Os backups JSON contêm tarefas, checklist, links e referências de anexos. Imagens e vídeos enviados ao editor ficam no IndexedDB local.
+- No GitHub Pages, publique `index.html`, `app.js`, `estilos.css`, `supabase-storage.js`, a pasta `vendor` e o arquivo `.nojekyll` na mesma pasta. O GitHub Pages hospeda o app e o Supabase armazena os dados.
+- Para abrir localmente, extraia o ZIP, execute `python -m http.server 8000` nessa pasta e acesse [localhost:8000](http://localhost:8000). O navegador trata o teste local e o site publicado como origens independentes.
+- `dados.json` é o exemplo do projeto original. A importação é opcional.
+
+A biblioteca usada no navegador é `@supabase/supabase-js` 2.119.2, distribuída com sua licença na pasta `vendor`.

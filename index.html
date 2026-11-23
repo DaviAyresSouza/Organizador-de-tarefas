@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f7f8fa">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: https: http:; media-src 'self' blob: https: http:; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: https: http:; media-src 'self' blob: https: http:; connect-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Meu Work OS</title>
   <link rel="stylesheet" href="estilos.css">
-  <script defer src="github.js"></script>
+  <script defer src="vendor/supabase.min.js"></script>
+  <script defer src="supabase-storage.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>

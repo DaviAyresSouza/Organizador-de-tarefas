@@ -4,7 +4,7 @@
   const KEY = 'meu_work_os_v2_dados';
   const LEGACY = 'meu_work_os_dados_v1';
   const SETTINGS = 'meu_work_os_v2_preferences';
-  const REPOSITORY = 'meu_work_os_github_repository';
+  const CLOUD_CONFIG = 'meu_work_os_v2_cloud';
   const RECOVERY = 'meu_work_os_v3_recuperacao';
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -95,9 +95,11 @@
     };
   }
 
-  function readState() {
-    let keys = [KEY, LEGACY];
-    try { if (localStorage.getItem('meu_work_os_v2_legacy_imported')) keys = [KEY]; } catch {}
+  function readState(keys = null) {
+    if (!keys) {
+      keys = [KEY, LEGACY];
+      try { if (localStorage.getItem('meu_work_os_v2_legacy_imported')) keys = [KEY]; } catch {}
+    }
     for (const key of keys) {
       try {
         const value = localStorage.getItem(key);
@@ -159,7 +161,7 @@
   function persist() {
     hasSavedWorkspace = true;
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      localStorage.setItem(cacheKey(), JSON.stringify(state));
       localSaved = true;
     } catch {
       localSaved = false;
@@ -276,7 +278,7 @@
     for (const card of $$('.kanban-card')) {
       const task = findTask(card.dataset.taskId)?.task;
       const file = task?.anexos.find(item => item.id === task.capa) || task?.anexos.find(item => item.tipo.startsWith('image/'));
-      if (file?.localizacao !== 'local' || !file.tipo.startsWith('image/') || attachmentUrl(file)) continue;
+      if (!file || !['local', 'cloud'].includes(file.localizacao) || !file.tipo.startsWith('image/') || attachmentUrl(file)) continue;
       getAttachmentUrl(file).then(url => {
         if (url && card.isConnected) card.insertAdjacentHTML('afterbegin', taskCover(task));
       }).catch(() => {});
@@ -438,7 +440,7 @@
         <div class="section-title">Anexos</div>
         <div id="attachments" class="attachment-list"></div>
         <label class="dropzone">${icon('clip')} Escolher imagem ou vídeo<input aria-label="Escolher imagens ou vídeos" id="media-input" class="file-input" type="file" accept="image/*,video/*" multiple></label>
-        <p class="help">Imagens e vídeos ficam neste navegador. Links acompanham a tarefa na sincronização.</p>
+        <p class="help">Imagens e vídeos são enviados ao Storage ao sincronizar com sua conta.</p>
         <div class="check-add"><input type="url" id="url-input" placeholder="https://..." aria-label="Link do anexo"><button class="btn sm" data-action="add-url">Adicionar link</button></div>
       </div>
       <aside>
@@ -535,10 +537,25 @@
     });
   }
 
-  const attachmentUrl = file => file.localizacao === 'url' ? safeUrl(file.url) : (objectUrls.get(file.id) || '');
+  const signedUrls = new Map();
+  function attachmentUrl(file) {
+    if (file.localizacao === 'url') return safeUrl(file.url);
+    if (file.localizacao === 'local') return objectUrls.get(file.id) || '';
+    const cached = signedUrls.get(file.caminho);
+    return cached && cached.expiresAt > Date.now() ? cached.url : '';
+  }
   async function getAttachmentUrl(file) {
     const cached = attachmentUrl(file);
-    if (cached || file.localizacao !== 'local') return cached;
+    if (cached) return cached;
+    if (file.localizacao === 'cloud') {
+      const active = session;
+      if (!active) return '';
+      const url = safeUrl(await active.storage.fileUrl(active.user.id, file.caminho));
+      if (session !== active || !url) return '';
+      signedUrls.set(file.caminho, { url, expiresAt: Date.now() + 240000 });
+      return url;
+    }
+    if (file.localizacao !== 'local') return '';
     const blob = await mediaRecord('readonly', store => store.get(file.id));
     if (!blob) return '';
     if (!objectUrls.has(file.id)) objectUrls.set(file.id, URL.createObjectURL(blob));
@@ -553,7 +570,7 @@
     const rows = await Promise.all(modalTask.anexos.map(async file => {
       const url = await getAttachmentUrl(file).catch(() => '');
       const image = url && file.tipo.startsWith('image/');
-      const label = file.localizacao === 'cloud' ? 'Arquivo do Supabase antigo' :
+      const label = file.localizacao === 'cloud' ? (url ? 'Supabase Storage' : 'Arquivo indisponível na conta atual') :
         (file.localizacao === 'local' ? (url ? 'Neste navegador' : 'Arquivo indisponível neste navegador') : 'Link externo');
       return `<div class="attachment">
         ${image ? `<img class="attachment-preview" src="${esc(url)}" alt="">` : `<span class="attachment-preview">${icon('clip')}</span>`}
@@ -669,19 +686,12 @@
   }
 
   function getRecovery() {
-    for (const key of [RECOVERY, 'meu_work_os_v2_backup_antes_da_nuvem', 'meu_work_os_v2_backup_pre_importacao']) {
+    const keys = session ? [recoveryKey()] : [RECOVERY, 'meu_work_os_v2_backup_antes_da_nuvem', 'meu_work_os_v2_backup_pre_importacao'];
+    for (const key of keys) {
       const value = localStorage.getItem(key);
       if (value) return normalizeData(JSON.parse(value));
     }
     return null;
-  }
-
-  function keepRecovery() {
-    try {
-      localStorage.setItem(RECOVERY, JSON.stringify(state));
-    } catch {
-      downloadBackup(state, '-recuperacao');
-    }
   }
 
   async function importBackup(input) {
@@ -691,24 +701,25 @@
     try {
       const data = normalizeData(JSON.parse(await file.text()));
       if (!confirm('Substituir as tarefas atuais pelas tarefas deste backup?')) return;
-      keepRecovery();
+      if (hasSavedWorkspace) rememberVersion(state);
       mutate(() => { state = data; });
-      toast('Backup importado. Arquivos anexados ficam no navegador de origem.');
+      toast('Backup importado. Os arquivos de mídia usam o armazenamento de origem.');
     } catch (error) {
       toast(`Falha na importação. ${error.message}`, true);
     }
   }
 
+  let connection = null;
   let session = null;
   let syncTimer;
   let syncBusy = false;
   let syncError = '';
   let conflict = false;
   let candidate = null;
-  let repositoryName = '';
-  try { repositoryName = localStorage.getItem(REPOSITORY) || ''; } catch {}
+  let cloudConfig = null;
   const snapshot = () => JSON.stringify(state);
-  const hasLocalWork = () => hasSavedWorkspace;
+  const cacheKey = () => session?.cacheKey || KEY;
+  const recoveryKey = () => session ? session.cacheKey + ':recovery' : RECOVERY;
 
   function renderCloudStatus() {
     let label = 'Modo local';
@@ -721,7 +732,7 @@
       kind = 'error';
     } else if (session) {
       const dirty = session.snapshot !== snapshot();
-      label = dirty ? 'Envio pendente' : 'GitHub conectado';
+      label = dirty ? 'Envio pendente' : 'Supabase conectado';
       kind = dirty ? 'pending' : 'online';
     }
     $('#cloud-text').textContent = label;
@@ -730,186 +741,342 @@
 
   function queueSync() {
     clearTimeout(syncTimer);
-    if (!session || syncBusy || conflict || syncError) return;
-    syncTimer = setTimeout(() => pushChanges(), 1300);
+    if (!session?.initialized || syncBusy || conflict || syncError) return;
+    syncTimer = setTimeout(pushChanges, 1300);
   }
 
   function syncMessage(error) {
-    if (error instanceof TypeError || error.name === 'TimeoutError') return 'Conexão com o GitHub indisponível. As alterações podem ser reenviadas ao reconectar.';
-    if (error instanceof SyntaxError) return 'O arquivo de tarefas no GitHub contém JSON inválido.';
-    return error.message;
+    if (error.code === 'PGRST205' || error.code === '42501') return 'Verifique se o script supabase_setup.sql foi aplicado e se a conta tem acesso ao quadro.';
+    if (error.code === 'invalid_credentials') return 'Confira o e-mail e a senha.';
+    if (error.code === 'email_not_confirmed') return 'Confirme seu e-mail antes de entrar.';
+    const message = error.message || '';
+    if (error instanceof TypeError || /failed to fetch|networkerror|timeout/i.test(message)) return 'Conexão com o Supabase indisponível. As alterações permanecem neste navegador.';
+    return message || 'A sincronização não foi concluída.';
+  }
+
+  async function uploadPendingFiles(target, data) {
+    const uploaded = new Map();
+    for (const group of data.grupos) {
+      for (const task of group.tarefas) {
+        for (const file of task.anexos) {
+          if (file.localizacao !== 'local') continue;
+          const blob = await mediaRecord('readonly', store => store.get(file.id));
+          if (!blob) continue;
+          if (target !== session) return uploaded;
+          file.caminho = await target.storage.putFile(target.user.id, file, blob);
+          file.localizacao = 'cloud';
+          uploaded.set(file.id, file.caminho);
+        }
+      }
+    }
+    return uploaded;
+  }
+
+  function applyUploadedFiles(uploaded) {
+    const update = task => {
+      for (const file of task.anexos) {
+        if (file.localizacao !== 'local' || !uploaded.has(file.id)) continue;
+        file.caminho = uploaded.get(file.id);
+        file.localizacao = 'cloud';
+      }
+    };
+    allTasks().forEach(update);
+    if (modalTask) {
+      const baseline = JSON.parse(modalBaseline);
+      update(baseline);
+      update(modalTask);
+      modalBaseline = JSON.stringify(baseline);
+      renderAttachments();
+    }
+    if (uploaded.size) persist();
   }
 
   async function pushChanges() {
-    if (!session || syncBusy || conflict) return false;
+    if (!session?.initialized || syncBusy || conflict) return false;
     const current = session;
     const pending = snapshot();
-    if (current.snapshot === pending && current.sha) return true;
+    if (current.snapshot === pending && current.version !== null) return true;
     syncError = '';
     syncBusy = true;
     renderCloudStatus();
     try {
-      current.sha = await current.storage.save(pending, current.sha);
-      current.snapshot = pending;
+      const data = JSON.parse(pending);
+      const uploaded = await uploadPendingFiles(current, data);
+      if (current !== session) return false;
+      current.version = await current.storage.save(current.user.id, data, current.version);
+      if (current !== session) return false;
+      current.snapshot = JSON.stringify(data);
+      if (uploaded.size) applyUploadedFiles(uploaded);
       return true;
     } catch (error) {
-      if (error.status === 409 || error.status === 422 || error.status === 404) {
-        try {
-          const remote = await current.storage.load();
-          if (remote.sha !== current.sha) {
-            const normalized = remote.data === null ? null : normalizeData(remote.data);
-            if (normalized && JSON.stringify(normalized) === pending) {
-              current.sha = remote.sha;
-              current.snapshot = pending;
-              return true;
-            }
-            conflict = true;
-          }
-        } catch {}
-      }
-      if (!conflict) syncError = syncMessage(error);
-      toast(conflict ? 'Outra versão foi encontrada no GitHub. Abra a sincronização para revisar.' : syncError, true);
+      if (current !== session) return false;
+      if (error instanceof WorkOSConflict) conflict = true;
+      else syncError = syncMessage(error);
+      toast(conflict ? 'Outra versão foi encontrada no Supabase. Abra a sincronização para revisar.' : syncError, true);
       return false;
     } finally {
       syncBusy = false;
       renderCloudStatus();
-      if (!conflict && !syncError && current.snapshot !== snapshot()) queueSync();
+      if (current === session && !conflict && !syncError && current.snapshot !== snapshot()) queueSync();
     }
   }
 
   function showSyncDialog() {
     candidate = null;
-    const connected = session ? `<p class="alert">Repositório privado <strong>${esc(repositoryName)}</strong></p>` : '';
-    const settings = `<div class="field"><label for="github-repo">Repositório privado</label><input id="github-repo" autocomplete="off" placeholder="usuário/repositorio-privado" value="${esc(repositoryName)}"></div>
-      <div class="field"><label for="github-token">Token com acesso ao repositório</label><input type="password" id="github-token" autocomplete="off" placeholder="github_pat_...">
-      <p class="help">Use um token fine-grained com permissão Contents: leitura e gravação. O token permanece em memória até fechar ou recarregar a página.</p></div>
-      <p class="tip">O GitHub guarda tarefas, checklist e links. Imagens e vídeos enviados ficam neste navegador.</p>`;
+    const connected = session ? `<p class="alert">Conta <strong>${esc(session.user.email || 'Supabase')}</strong></p>` : '';
+    const config = `<div class="field"><label for="sb-url">URL do projeto Supabase</label><input id="sb-url" type="url" autocomplete="off" placeholder="https://seu-projeto.supabase.co" value="${esc(cloudConfig?.url)}"></div>
+      <div class="field"><label for="sb-key">Chave pública do projeto</label><input id="sb-key" autocomplete="off" placeholder="sb_publishable_..." value="${esc(cloudConfig?.key)}">
+      <p class="help">Use a chave publishable ou anon do projeto.</p></div>`;
+    const login = `<div class="field"><label for="auth-email">E-mail</label><input id="auth-email" type="email" autocomplete="username"></div>
+      <div class="field"><label for="auth-password">Senha</label><input id="auth-password" type="password" autocomplete="current-password"></div>
+      <details><summary>Configuração do projeto</summary>${config}<button class="btn sm" data-action="save-supabase">Salvar configuração</button></details>`;
+    const actions = session ? `<button class="btn" data-action="disconnect">Sair da conta</button><button class="btn primary" data-action="sync-now">${conflict ? 'Revisar versões' : 'Sincronizar agora'}</button>` :
+      (cloudConfig ? `${closeButton}<button class="btn" data-action="signup">Criar conta</button><button class="btn primary" data-action="connect">Entrar</button>` :
+        `${closeButton}<button class="btn primary" data-action="save-supabase">Salvar configuração</button>`);
     let recovery = '';
     try {
       if (getRecovery()) recovery = '<button class="btn sm" data-action="recovery">Exportar versão anterior</button>';
     } catch {}
-    dialog('Sincronização com GitHub', `<div class="modal-body">${connected}
+    dialog('Sincronização com Supabase', `<div class="modal-body">${connected}
       ${syncError ? `<p class="alert warning">${esc(syncError)}</p>` : ''}
-      ${conflict ? '<p class="alert warning">As tarefas deste navegador e as do GitHub têm versões diferentes.</p>' : ''}
-      ${session ? '<p class="tip">Você pode continuar trabalhando com a cópia deste navegador.</p>' : settings}
-      ${recovery}<p id="sync-feedback" class="help" role="status"></p></div>`,
-      session ? `<button class="btn" data-action="disconnect">Desconectar</button><button class="btn primary" data-action="sync-now">${conflict ? 'Revisar versões' : 'Sincronizar agora'}</button>` :
-      `${closeButton}<button class="btn primary" data-action="connect">Conectar</button>`);
+      ${conflict ? '<p class="alert warning">As versões deste navegador e do Supabase precisam de revisão.</p>' : ''}
+      ${session ? '<p class="tip">Tarefas e mídias sincronizam com sua conta. Uma cópia das tarefas fica neste navegador.</p>' : (cloudConfig ? login : config)}
+      ${recovery}<p id="sync-feedback" class="help" role="status"></p></div>`, actions);
+  }
+
+  function rememberVersion(data) {
+    try {
+      localStorage.setItem(recoveryKey(), JSON.stringify(data));
+    } catch {
+      downloadBackup(data, '-recuperacao');
+    }
   }
 
   function takeRemote(data) {
-    if (snapshot() !== JSON.stringify(data)) keepRecovery();
+    if (snapshot() !== JSON.stringify(data) && hasSavedWorkspace) rememberVersion(state);
     state = data;
     persist();
   }
 
-  function setRepository(name) {
-    repositoryName = name;
-    try { localStorage.setItem(REPOSITORY, name); } catch {}
-  }
-
-  function showSyncChoice(newSession, remote) {
-    candidate = { newSession, remote };
+  function showSyncChoice(target, remote) {
+    candidate = { target, remote };
     dialog('Revisar versões', `<div class="modal-body">
-      <p class="alert warning">Escolha qual versão usar. As duas versões serão preservadas antes da substituição, na cópia de recuperação local ou no histórico do GitHub.</p>
-      <p><strong>Neste navegador:</strong> ${plural(allTasks().length, 'tarefa', 'tarefas')}</p>
-      <p><strong>No GitHub:</strong> ${plural(remote.data?.grupos.reduce((total, group) => total + group.tarefas.length, 0) || 0, 'tarefa', 'tarefas')}</p>
-    </div>`, `${closeButton}<button class="btn" data-action="choose-local">Enviar versão local</button>${remote.data ? '<button class="btn primary" data-action="choose-remote">Usar versão do GitHub</button>' : ''}`);
+      <p class="alert warning">Escolha qual quadro usar. Você pode baixar a versão substituída na janela de sincronização.</p>
+      <p><strong>Neste navegador</strong> · ${plural(allTasks().length, 'tarefa', 'tarefas')}</p>
+      <p><strong>No Supabase</strong> · ${plural(remote.data?.grupos.reduce((total, group) => total + group.tarefas.length, 0) || 0, 'tarefa', 'tarefas')}</p>
+    </div>`, `${closeButton}<button class="btn" data-action="choose-local">Enviar versão local</button>${remote.data ? '<button class="btn primary" data-action="choose-remote">Usar versão do Supabase</button>' : ''}`);
   }
 
-  async function refreshSync(connecting) {
-    if (syncBusy) return;
-    const repository = connecting ? $('#github-repo').value.trim() : repositoryName;
+  async function refreshSync({ automatic = false } = {}) {
+    if (syncBusy || !session) return;
+    const target = session;
     clearTimeout(syncTimer);
-    const tokenInput = $('#github-token');
-    let target;
-    try {
-      target = connecting ? { storage: new GitHubStorage(repository, tokenInput.value.trim()), sha: null, snapshot: null } : session;
-    } catch (error) {
-      $('#sync-feedback').textContent = error.message;
-      return;
-    }
-    if (!target) return;
     const feedback = $('#sync-feedback');
-    const action = $(`[data-action="${connecting ? 'connect' : 'sync-now'}"]`);
-    if (tokenInput) tokenInput.value = '';
+    if (feedback) feedback.textContent = 'Consultando o Supabase…';
     syncBusy = true;
-    action.disabled = true;
-    feedback.textContent = 'Consultando o repositório…';
-    renderCloudStatus();
     let readyToPush = false;
-    let completed = false;
+    renderCloudStatus();
     try {
-      const remote = await target.storage.load();
-      if (!feedback.isConnected) return;
+      const remote = await target.storage.load(target.user.id);
+      if (target !== session) return;
       if (remote.data !== null) remote.data = normalizeData(remote.data);
       const remoteSnapshot = remote.data ? JSON.stringify(remote.data) : null;
       const local = snapshot();
       const matches = remoteSnapshot === local;
-      const remoteMoved = target.sha !== remote.sha;
+      const remoteMoved = target.version !== remote.version;
       const localChanged = target.snapshot !== local;
       const mustChoose = !matches && (
-        (connecting && remote.data && hasLocalWork()) ||
-        (!connecting && remoteMoved && (localChanged || !remote.data))
+        (!target.initialized && Boolean(remote.data) && hasSavedWorkspace) ||
+        (target.initialized && remoteMoved && (localChanged || !remote.data)) ||
+        (remote.data && remoteMoved && Boolean(modalTask || modalGroup))
       );
       if (mustChoose) {
-        if (connecting) target.repository = repository;
-        showSyncChoice(target, remote);
+        conflict = true;
+        syncError = '';
+        if (!$('#overlay') || feedback?.isConnected) showSyncChoice(target, remote);
         return;
       }
-      if (connecting) setRepository(repository);
-      session = target;
       conflict = false;
       syncError = '';
-      target.sha = remote.sha;
+      if (remote.data && !matches && (!target.initialized || remoteMoved)) takeRemote(remote.data);
+      else if (matches) persist();
+      target.version = remote.version;
       target.snapshot = remoteSnapshot;
-      if (remote.data && !matches && (connecting || remoteMoved)) takeRemote(remote.data);
+      target.initialized = true;
       readyToPush = target.snapshot !== snapshot();
-      completed = true;
-      closeDialog({ force: true });
+      if (feedback?.isConnected) closeDialog({ force: true });
       render();
     } catch (error) {
-      if (feedback.isConnected) feedback.textContent = syncMessage(error);
-      if (!connecting) syncError = syncMessage(error);
+      if (target !== session) return;
+      syncError = syncMessage(error);
+      if (feedback?.isConnected) feedback.textContent = syncError;
+      else if (!automatic) toast(syncError, true);
     } finally {
-      action.disabled = false;
       syncBusy = false;
       renderCloudStatus();
-      if (!completed && !connecting && !conflict && !syncError && !candidate && session?.snapshot !== snapshot()) queueSync();
     }
-    if (completed && (!readyToPush || await pushChanges())) toast('Tarefas sincronizadas com o GitHub.');
+    if (target !== session || syncError) return;
+    if ((!readyToPush || await pushChanges()) && !automatic) toast('Tarefas sincronizadas com o Supabase.');
   }
 
   async function chooseSync(useRemote) {
-    if (!candidate || syncBusy) return;
-    const { newSession, remote } = candidate;
-    if (!useRemote && remote.data && !confirm('Substituir a versão atual do GitHub pelas tarefas deste navegador?')) return;
-    if (newSession.repository) setRepository(newSession.repository);
-    session = newSession;
-    session.sha = remote.sha;
-    session.snapshot = remote.data ? JSON.stringify(remote.data) : null;
+    if (!candidate || syncBusy || candidate.target !== session) return;
+    const { target, remote } = candidate;
+    if (!useRemote && remote.data && !confirm('Substituir a versão atual do Supabase pelas tarefas deste navegador?')) return;
+    target.version = remote.version;
+    target.snapshot = remote.data ? JSON.stringify(remote.data) : null;
+    target.initialized = true;
     candidate = null;
     conflict = false;
     syncError = '';
     if (useRemote && remote.data) takeRemote(remote.data);
+    else {
+      if (remote.data) rememberVersion(remote.data);
+      persist();
+    }
     closeDialog({ force: true });
     render();
-    if (useRemote || await pushChanges()) toast('Tarefas sincronizadas com o GitHub.');
+    if (useRemote || await pushChanges()) toast('Tarefas sincronizadas com o Supabase.');
   }
 
-  function disconnectSync() {
-    if (syncBusy) {
-      toast('Aguarde a sincronização em andamento.');
-      return;
+  function activateAccount(storage, user) {
+    const accountKey = `${KEY}:supabase:${cloudConfig.url}:${user.id}`;
+    const cached = readState([accountKey]);
+    if (cached) {
+      state = cached;
+      hasSavedWorkspace = true;
+      localSaved = true;
     }
+    session = { storage, user, cacheKey: accountKey, version: null, snapshot: null, initialized: false };
+    render();
+  }
+
+  function resetAccount() {
     clearTimeout(syncTimer);
     session = null;
     candidate = null;
     conflict = false;
     syncError = '';
+    signedUrls.clear();
+    const offline = readState();
+    state = offline || defaultData();
+    hasSavedWorkspace = Boolean(offline);
+    localSaved = true;
+    render();
+  }
+
+  function openConnection() {
+    const storage = new SupabaseStorage(cloudConfig);
+    connection = storage;
+    storage.client.auth.onAuthStateChange(event => {
+      if (event !== 'SIGNED_OUT') return;
+      setTimeout(() => leaveExternalSession(storage), 0);
+    });
+    return storage;
+  }
+
+  function leaveExternalSession(storage) {
+    if (session?.storage !== storage) return;
+    if (mediaBusy) {
+      setTimeout(() => leaveExternalSession(storage), 100);
+      return;
+    }
+    closePreview();
     closeDialog({ force: true });
+    resetAccount();
+  }
+
+  async function restoreSession() {
+    if (!cloudConfig || syncBusy) return;
+    syncBusy = true;
     renderCloudStatus();
-    toast('GitHub desconectado.');
+    const locked = !$('#overlay');
+    if (locked) $('#app').inert = true;
+    try {
+      const storage = openConnection();
+      const { data, error } = await storage.client.auth.getSession();
+      if (error) throw error;
+      if (data.session?.user && connection === storage) activateAccount(storage, data.session.user);
+    } catch (error) {
+      syncError = syncMessage(error);
+    } finally {
+      syncBusy = false;
+      if (locked) $('#app').inert = false;
+      renderCloudStatus();
+    }
+    if (session) refreshSync({ automatic: true });
+  }
+
+  function saveSupabaseConfig() {
+    if (syncBusy) return;
+    try {
+      const config = SupabaseStorage.configuration($('#sb-url').value.trim(), $('#sb-key').value.trim());
+      localStorage.setItem(CLOUD_CONFIG, JSON.stringify(config));
+      cloudConfig = config;
+      connection = null;
+      syncError = '';
+      showSyncDialog();
+      restoreSession();
+    } catch (error) {
+      $('#sync-feedback').textContent = error.message || 'Confira a configuração do projeto.';
+    }
+  }
+
+  async function loginSupabase(signup = false) {
+    if (!cloudConfig || syncBusy || session) return;
+    const email = $('#auth-email').value.trim();
+    const passwordInput = $('#auth-password');
+    const password = passwordInput.value;
+    const feedback = $('#sync-feedback');
+    if (!email || !password) {
+      feedback.textContent = 'Informe seu e-mail e sua senha.';
+      return;
+    }
+    syncBusy = true;
+    renderCloudStatus();
+    try {
+      const storage = connection || openConnection();
+      const credentials = { email, password };
+      const { data, error } = signup ? await storage.client.auth.signUp(credentials) :
+        await storage.client.auth.signInWithPassword(credentials);
+      if (error) throw error;
+      connection = storage;
+      passwordInput.value = '';
+      if (!data.session?.user) {
+        if (feedback.isConnected) feedback.textContent = 'Confira seu e-mail para confirmar a conta e depois entre no app.';
+        return;
+      }
+      activateAccount(storage, data.session.user);
+    } catch (error) {
+      if (feedback.isConnected) feedback.textContent = syncMessage(error);
+    } finally {
+      syncBusy = false;
+      renderCloudStatus();
+    }
+    if (session) refreshSync();
+  }
+
+  async function disconnectSync() {
+    if (syncBusy || !session) return;
+    const current = session;
+    if (!localSaved) {
+      toast('Exporte um backup das tarefas antes de sair da conta.', true);
+      return;
+    }
+    syncBusy = true;
+    renderCloudStatus();
+    try {
+      const { error } = await current.storage.client.auth.signOut({ scope: 'local' });
+      if (error) throw error;
+      closeDialog({ force: true });
+      if (session === current) resetAccount();
+      toast('Sessão encerrada. Sua cópia sincronizada fica disponível ao entrar novamente.');
+    } catch (error) {
+      toast(syncMessage(error), true);
+    } finally {
+      syncBusy = false;
+      renderCloudStatus();
+    }
   }
 
   function closeWorkspaceMenu() {
@@ -1006,9 +1173,11 @@
         catch { toast('A versão anterior está indisponível.', true); }
         break;
       case 'cloud': showSyncDialog(); break;
-      case 'connect': refreshSync(true); break;
+      case 'connect': loginSupabase(); break;
+      case 'signup': loginSupabase(true); break;
+      case 'save-supabase': saveSupabaseConfig(); break;
       case 'disconnect': disconnectSync(); break;
-      case 'sync-now': refreshSync(false); break;
+      case 'sync-now': refreshSync(); break;
       case 'choose-remote': chooseSync(true); break;
       case 'choose-local': chooseSync(false); break;
       case 'calendar-prev':
@@ -1079,7 +1248,7 @@
     else if (event.key === 'Enter' && id === 'group-name') saveGroup();
     else if (event.key === 'Enter' && id === 'url-input') addUrl();
     else if (event.key === 'Enter' && id === 'workspace-name') $('[data-action="save-workspace"]').click();
-    else if (event.key === 'Enter' && id === 'github-token') $('[data-action="connect"]').click();
+    else if (event.key === 'Enter' && id === 'auth-password') $('[data-action="connect"]').click();
     else if (['Enter', ' '].includes(event.key) && event.target.matches('.kanban-card')) {
       event.preventDefault();
       showTaskDialog(event.target.dataset.taskId);
@@ -1155,6 +1324,10 @@
     }
   });
 
-  try { localStorage.removeItem('meu_work_os_gh_config'); } catch {}
+  try {
+    const saved = JSON.parse(localStorage.getItem(CLOUD_CONFIG));
+    if (saved) cloudConfig = SupabaseStorage.configuration(saved.url, saved.key);
+  } catch {}
   render();
+  restoreSession();
 })();
